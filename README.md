@@ -26,7 +26,20 @@ This project seeks to provide added value to the Mattermost ecosystem by adding 
 \* Performance tests are most reliable when minimizing the number of variables impacting their results  
 \*\* Tests ran either through the Chrome developer tools' `audit` tab, or through the Lighthouse plugin on a browser
 
-### **Feature List**
+### **Use Cases**
+* The development team uses a `/lighthouse https://siteurl.com` command to quickly run an audit of their website's performance, and have the results shared in Mattermost for all the team to see.  
+![](documentation/img/audit_report_channel.png)
+  * A brief overview is displayed in-channel, with a link provided to a HTML template that displays the results of a given audit
+![](documentation/img/audit_report_html.png)
+* Running the `/lighthouse stats https://siteurl.com` to view the changes in performance over time as a chart
+<!-- TODO show image of performance score in chart, from a Mattermost channel -->
+* Scheduling audit tasks for various sites that display the latest values, and the performance trend over time for a given site using `/lighthouse schedule` command and selecting options in a returned dialog
+
+### **Approach**
+The overall approach of this project is to create a private lighthouse testbed that is tightly integrated with Mattermost.
+Offering a wide list of features that prioritize ease of usage.
+
+#### **Feature List**
 |      |     |
 | :--: | :-- |
 | ![](documentation/img/terminal-solid.png) | Ad-hoc audit testing through slash commands |
@@ -34,23 +47,6 @@ This project seeks to provide added value to the Mattermost ecosystem by adding 
 | ![](documentation/img/chart-bar-regular.png) | Viewing performance trends as charts directly from Mattermost | 
 | ![](documentation/img/file-alt-regular.png) | Have access to the full report generated as HTML files by Lighthouse |
 
-<!-- Post-hackathon ideas:
-  * Ephemeral mode: Runs backend service through a single container (no data store), only supporting a limited (and simpler) set of features -->
+---
 
-
-### **Use Cases**
-<!-- TODO add image of returned message -->
-* The development team uses a `/lighthouse https://siteurl.com` command to quickly run an audit of their website's performance, and have the results shared in Mattermost for all the team to see.  
-![](documentation/img/audit_report_channel.png)
-  * A brief overview is displayed in-channel, with a link provided to a HTML template that displays the results of a given audit
-![](documentation/img/audit_report_html.png)
-<!-- TODO Add image of how an HTML template would look like -->
-* Running the `/lighthouse stats https://siteurl.com` to view the changes in performance over time as a chart
-<!-- TODO show image of performance score in chart, from a Mattermost channel -->
-* Scheduling audit tasks for various sites that display the latest values, and the performance trend over time for a given site using `/lighthouse schedule` command and selecting options in a returned dialog
-
-### **Approach**
-<!-- TODO: Create a diagram that shows each component interacting with each other -->
-
-
-https://fontawesome.com/license
+README icons downloaded from <a href="https://fontawesome.com/license">FontAwesome</a>
