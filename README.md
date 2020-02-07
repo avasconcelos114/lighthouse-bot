@@ -10,7 +10,7 @@ You can [read the full Hackfest Proposal here](/documentation/README.md)
 ## Running on Docker
 0. Build Lighthouse bot image
 ```
-docker build -t lighthouse-bot
+docker build -t lighthouse-bot .
 ```
 
 1. Run mongodb (from container)
