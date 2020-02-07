@@ -1,37 +1,47 @@
-const chromeLauncher = require('chrome-launcher');
 const puppeteer = require('puppeteer');
 const lighthouse = require('lighthouse');
-const request = require('request');
-const util = require('util');
+const {logger} = require('./common');
 
 async function runLighthouseAudit(url, authScript) {
-    const opts = {
-    //chromeFlags: ['--headless'],
-    logLevel: 'info',
-    output: 'json'
-    };
+    try {
+        const browser = await puppeteer.launch({
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                // This will write shared memory files into /tmp instead of /dev/shm,
+                // because Docker’s default for /dev/shm is 64MB
+                '--disable-dev-shm-usage'
+            ]
+        });
 
-    // Launch chrome using chrome-launcher.
-    const chrome = await chromeLauncher.launch(opts);
-    opts.port = chrome.port;
+        browser.on('targetchanged', async target => {
+            // If user has send an authentication script, inject page with it
+            if (authScript) {
+                const page = await target.page();
+                if (page) {
+                    const client = await page.target().createCDPSession();
+                    await client.send('Runtime.evaluate', {
+                        expression: `(${authScript.toString()})()`
+                    });
+                }
+            }
+        });
 
-    // Connect to it using puppeteer.connect().
-    const resp = await util.promisify(request)(`http://localhost:${opts.port}/json/version`);
-    const {webSocketDebuggerUrl} = JSON.parse(resp.body);
-    const browser = await puppeteer.connect({browserWSEndpoint: webSocketDebuggerUrl});
-
-    if (authScript) {
-        let authFunction = eval(authScript);
-        authFunction();
+        // Lighthouse will open URL. Puppeteer observes `targetchanged` and sets up network conditions.
+        // Possible race condition.
+        const {lhr} = await lighthouse(url, {
+            port: (new URL(browser.wsEndpoint())).port,
+            output: 'json',
+            logLevel: 'info',
+        });
+        
+        console.log(`Lighthouse scores: ${Object.values(lhr.categories).map(c => c.score).join(', ')}`);
+        
+        await browser.close();
+        return lhr;
+    } catch(error) {
+        logger.error(error.toString());
     }
-
-    // Run Lighthouse.
-    const {lhr}  = await lighthouse(url, opts, null);
-    console.log(`Lighthouse scores: ${Object.values(lhr.categories).map(c => c.score).join(', ')}`);
-
-    await browser.disconnect();
-    await chrome.kill();
-    return lhr;
 }
 
 module.exports = {

@@ -38,7 +38,7 @@ app.get('/lighthouse', async function(req, res) {
                 const dialog = utils.response.generateAuditDialog(true);
                 const payload = {
                     trigger_id: reqData.trigger_id,
-                    url: `${CHATBOT_SERVER}:${PORT}/run_audit`,
+                    url: `${CHATBOT_SERVER}/run_audit`,
                     dialog,
                 };
                 await api.openDialog(payload);
@@ -54,7 +54,7 @@ app.get('/lighthouse', async function(req, res) {
                 const dialog = utils.response.generateAuditDialog();
                 const payload = {
                     trigger_id: reqData.trigger_id,
-                    url: `${CHATBOT_SERVER}:${PORT}/run_audit`,
+                    url: `${CHATBOT_SERVER}/run_audit`,
                     dialog,
                 };
                 await api.openDialog(payload);
@@ -65,9 +65,17 @@ app.get('/lighthouse', async function(req, res) {
 
 app.post('/run_audit', async function(req, res) {
     const data = req.body.submission;
-
-    const response = await utils.lighthouse.runLighthouseAudit(data.url, data.authScript);
-    console.log(response);
+    try {
+        const response = await utils.lighthouse.runLighthouseAudit(data.url, data.authScript);
+        console.log(response);
+        // Run audit
+        // Store results
+        // Generate html file report
+        // build MM payload
+        // Send response to MM
+    } catch(error) {
+        // Respond with ephemeral error message
+    }
     res.send();
 });
 

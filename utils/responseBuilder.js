@@ -8,7 +8,7 @@ function generateAuditDialog(isSchedule) {
 
     const url = {
         display_name: 'URL',
-        name: 'url',
+        name: 'audit_url',
         type: 'text',
         subtype: 'url',
         help_text: 'The URL of the page for Lighthouse to run an audit for',
