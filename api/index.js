@@ -5,7 +5,6 @@ const utils = require('../utils');
 const MATTERMOST_URL = utils.common.checkEnvVar(constants.MATTERMOST_SERVER);
 const TOKEN = utils.common.checkEnvVar(constants.TOKEN);
 
-// Post message to mattermost
 async function sendPostToChannel(payload) {
     const data = await doPost(`${MATTERMOST_URL}/api/v4/posts`, payload);
     return data;
@@ -16,7 +15,6 @@ async function openDialog(payload) {
     return data;
 }
 
-// Get a user from user_id 
 async function getUser(userId) {
     const data = await doGet(`${MATTERMOST_URL}/api/v4/users/${userId}`);
     return data;
@@ -32,13 +30,13 @@ async function doGet(url) {
     };
 
     return await axios(options)
-        .then((response) => {
-            return response.data;
-        })
-        .catch((error) => {
-            utils.common.logger.error(error);
-            return error;
-        });
+    .then((response) => {
+        return response.data;
+    })
+    .catch((error) => {
+        utils.common.logger.error(error);
+        return error;
+    });
 }
 
 async function doPost(url, data) {
@@ -53,13 +51,13 @@ async function doPost(url, data) {
     };
 
     return await axios(options)
-        .then((response) => {
-            return response.data;
-        })
-        .catch((error) => {
-            utils.common.logger.error(error);
-            return error;
-        });
+    .then((response) => {
+        return response.data;
+    })
+    .catch((error) => {
+        utils.common.logger.error(error);
+        return error;
+    });
 }
 
 module.exports = {

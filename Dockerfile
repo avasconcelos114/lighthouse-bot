@@ -16,7 +16,6 @@ COPY . /home/app
 WORKDIR /home/app
 
 # We will be manually installing chromium to prevent version mixups
-# ARG CACHEBUST=1
 RUN npm install puppeteer
 
 RUN npm install -g pm2

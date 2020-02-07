@@ -40,3 +40,22 @@ docker run -d -p 3001:3001 -v $PWD:/home/app -e TZ="Asia/Seoul" -e PORT=3001 -e 
 ```
 
 4. [Register a slash command](https://docs.mattermost.com/developer/slash-commands.html#custom-slash-command) in Mattermost that sends a `GET` request to the `/lighthouse` endpoint
+
+## Dealing with authentication screens
+Sometimes the page you need to test is behind an authentication screen. 
+
+In times like that you may inject puppeteer configuration in the `Authentication Script` section of the dialog (when using the `/lighthouse` command)
+
+Example script:
+```
+const emailInput = await page.$('input[type="email"]');
+await emailInput.type('admin@example.com');
+const passwordInput = await page.$('input[type="password"]');
+await passwordInput.type('password');
+await Promise.all([
+  page.$eval('.login-form', form => form.submit()),
+  page.waitForNavigation(),
+]);
+```
+
+Full reference: https://github.com/GoogleChrome/lighthouse/tree/master/docs/recipes/auth
