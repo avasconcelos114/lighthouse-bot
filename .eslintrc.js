@@ -13,5 +13,7 @@ module.exports = {
         "ecmaVersion": 2018
     },
     "rules": {
+        "semi": 1,
+        "object-curly-spacing": 2,
     }
 };
