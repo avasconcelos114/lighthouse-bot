@@ -1,52 +1,42 @@
 # Lighthouse Auditing Bot
 ![](documentation/img/lighthouse-logo.png)
-## Table of Contents
-* [Hackfest Proposal](#hackathon-proposal)
-  * [Summary](#summary)
-  * [Problem Statement](#problem-statement)
-  * [Feature List](#feature-list)
-  * [Use Cases](#use-cases)
-  * [Approach](#approach)
 
+## Summary
 ## Hackfest Proposal
-### **Summary**
-This project seeks to provide added value to the Mattermost ecosystem by adding performance auditing of websites with Google's [Lighthouse](https://developers.google.com/web/tools/lighthouse), offering a testing environment that is accessible directly from any Mattermost channel.
+This project has been created as a submission to the Mattermost Bot Hackfest.
 
-### **Problem Statement**
-* Website auditing is an often overlooked part of front-end development because of how difficult it is to integrate it to the developers' daily workflow
-* Even when periodically used, auditing with Lighthouse can prove to be unreliable* when running on the client-side** because:
-  * The internet speed on a given client can vary, causing significant variations in the following metrics:
-    * [Time to interactive](https://developers.google.com/web/tools/lighthouse/audits/time-to-interactive)
-    * [First Contentful Paint](https://developers.google.com/web/tools/lighthouse/audits/first-contentful-paint)
-    * [First Meaningful Paint](https://developers.google.com/web/tools/lighthouse/audits/first-meaningful-paint)
-  * Processes running in the background of a computer can have on impact on the results with regards to performance
-* It's difficult to share the results of a performance audit with the rest of the team
-* There's no current way to track performance over time
+You can [read the full Hackfest Proposal here](/documentation/README.md)
 
-\* Performance tests are most reliable when minimizing the number of variables impacting their results  
-\*\* Tests ran either through the Chrome developer tools' `audit` tab, or through the Lighthouse plugin on a browser
+## Running on Docker
+0. Build Lighthouse bot image
+```
+docker build -t lighthouse-bot
+```
 
-### **Use Cases**
-* The development team uses a `/lighthouse https://siteurl.com` command to quickly run an audit of their website's performance, and have the results shared in Mattermost for all the team to see.  
-![](documentation/img/audit_report_channel.png)
-  * A brief overview is displayed in-channel, with a link provided to a HTML template that displays the results of a given audit
-![](documentation/img/audit_report_html.png)
-* Running the `/lighthouse stats https://siteurl.com` to view the changes in performance over time as a chart
-<!-- TODO show image of performance score in chart, from a Mattermost channel -->
-* Scheduling audit tasks for various sites that display the latest values, and the performance trend over time for a given site using `/lighthouse schedule` command and selecting options in a returned dialog
+1. Run mongodb (from container)
+```
+docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME="root" -e MONGO_INITDB_ROOT_PASSWORD="test_passwd" --name draw-mongo mongo:latest
+```
 
-### **Approach**
-The overall approach of this project is to create a private lighthouse testbed that is tightly integrated with Mattermost.
-Offering a wide list of features that prioritize ease of usage.
+2. [Create a Bot Account](https://docs.mattermost.com/developer/bot-accounts.html#user-interface-ui), or [issue a Personal Access Token](https://docs.mattermost.com/developer/personal-access-tokens.html#creating-a-personal-access-token) in a Mattermost server of your choice
 
-#### **Feature List**
-|      |     |
-| :--: | :-- |
-| ![](documentation/img/terminal-solid.png) | Ad-hoc audit testing through slash commands |
-| ![](documentation/img/clock-regular.png) | Scheduling of periodic audits (daily, or weekly) | 
-| ![](documentation/img/chart-bar-regular.png) | Viewing performance trends as charts directly from Mattermost | 
-| ![](documentation/img/file-alt-regular.png) | Have access to the full report generated as HTML files by Lighthouse |
+3. Run Lighthouse bot container  
+Ensure you have the following environment variables set when running the container:
 
----
+| Variable name | Example value | Explanations / Notes |
+| :--: | :--: | :-- |
+| PORT | 3001 | The port being used by this chatbot |
+| MATTERMOST_SERVER | http://192.168.1.10:8065 | The Mattermost instance you are using |
+| TOKEN | sd67j1cxepnc7meo3pof3krzgr | A Personal Access Token or Bot Account Token |
+| MONGO_USERNAME | root | Auth username for a mongodb server |
+| MONGO_PASSWORD | test_passwd | Auth password for a mongodb server |
+| MONGO_SERVER | 192.168.1.10:27017 | The endpoint for a mongodb server |
+| CHATBOT_SERVER | http://192.168.1.10:3001 | IP to be used by this chatbot (needed to set URL endpoints in Message Attachments) |
+| TZ | Asia/Seoul | A timezone that will be used for timestamps when logging |
 
-README icons downloaded from <a href="https://fontawesome.com/license">FontAwesome</a>
+Example `run` command:
+```
+docker run -d -p 3001:3001 -v $PWD:/home/app -e TZ="Asia/Seoul" -e PORT=3001 -e MATTERMOST_SERVER="https://192.168.1.10:8065" -e TOKEN="sd67j1cxepnc7meo3prf3krzgr" -e MONGO_USERNAME="root" -e MONGO_PASSWORD="test_passwd" -e MONGO_SERVER="192.168.1.10:27017" -e CHATBOT_SERVER="http://192.168.1.10:3001" --name lighthouse-bot lighthouse-bot
+```
+
+4. [Register a slash command](https://docs.mattermost.com/developer/slash-commands.html#custom-slash-command) in Mattermost that sends a `GET` request to the `/lighthouse` endpoint
