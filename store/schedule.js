@@ -3,7 +3,7 @@ const utils = require('../utils');
 
 const schema = new mongoose.Schema({
     createdDate: Number, // unix timestamp
-    creator: String, // username of person who registered a given schedule
+    user_id: String, // id of person who registered a given schedule
     schedule: String, // cron formatted string for schedule to be initiated
 });
 
@@ -11,8 +11,8 @@ const ScheduleModel = mongoose.model('Schedule', schema);
 
 async function createSchedule(payload) {
     const newSchedule = new ScheduleModel({
-        createdDate: utils.generateTimestamp(),
-        creator: payload.creator,
+        createdDate: utils.common.generateTimestamp(),
+        creator: payload.userId,
         schedule: payload.schedule,
     });
 
