@@ -32,7 +32,7 @@ async function runLighthouseAudit(url, authScript) {
         const {lhr} = await lighthouse(url, {
             port: (new URL(browser.wsEndpoint())).port,
             output: 'json',
-            logLevel: 'info',
+            logLevel: 'error',
         });
         
         console.log(`Lighthouse scores: ${Object.values(lhr.categories).map(c => c.score).join(', ')}`);
