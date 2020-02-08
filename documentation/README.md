@@ -32,7 +32,6 @@ This project seeks to provide added value to the Mattermost ecosystem by adding 
   * A brief overview is displayed in-channel, with a link provided to a HTML template that displays the results of a given audit
 ![](img/audit_report_html.png)
 * Running the `/lighthouse stats https://siteurl.com` to view the changes in performance over time as a chart
-<!-- TODO show image of performance score in chart, from a Mattermost channel -->
 * Scheduling audit tasks for various sites that display the latest values, and the performance trend over time for a given site using `/lighthouse schedule` command and selecting options in a returned dialog
 
 ### **Approach**

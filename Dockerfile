@@ -15,12 +15,7 @@ RUN  apt-get update \
 COPY . /home/app
 WORKDIR /home/app
 
-# We will be manually installing chromium to prevent version mixups
-RUN npm install puppeteer
-
 RUN npm install -g pm2
-
-# Prevent chromium from being re-installed
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
+RUN npm install puppeteer
 RUN npm install
 CMD [ "npm", "start" ]
