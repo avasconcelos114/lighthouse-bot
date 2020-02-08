@@ -1,10 +1,9 @@
-const {logger} = require('./common');
+const {logger, getColorForScore} = require('./common');
 
 function generateAuditDialog(isSchedule) {
     logger.debug('Attempting to build an audit dialog');
     let title = 'Run Lighthouse Audit';
     let elements = [];
-    let schedule;
 
     const url = {
         display_name: 'URL',
@@ -15,14 +14,7 @@ function generateAuditDialog(isSchedule) {
         placeholder: 'http://127.0.0.1',
         optional: false,
     };
-
-    const authScript = {
-        display_name: 'Authentication Script',
-        name: 'auth_script',
-        type: 'textarea',
-        help_text: 'If you need to test a page that requires an authenticated user, insert a code snippet that will authenticate puppeteer into your app before testing',
-        optional: true,
-    };
+    elements.push(url);
 
     const throttle = {
         display_name: 'Throttling',
@@ -41,21 +33,27 @@ function generateAuditDialog(isSchedule) {
            },
          ]
     };
+    elements.push(throttle);
 
     if (isSchedule) {
         title = 'Register Audit Schedule';
-        schedule = {
+        const schedule = {
             display_name: 'Schedule',
             name: 'schedule',
             type: 'text',
             default: '* * * * *',
             help_text: 'Input the frequency of scheduled audits using the Cron time format'
         };
+        elements.push(schedule);
     }
 
-    elements.push(url);
-    elements.push(throttle);
-    elements.push(schedule);
+    const authScript = {
+        display_name: 'Authentication Script',
+        name: 'auth_script',
+        type: 'textarea',
+        help_text: 'If you need to test a page that requires an authenticated user, insert a code snippet that will authenticate puppeteer into your app before testing',
+        optional: true,
+    };
     elements.push(authScript);
 
     return {
@@ -66,6 +64,43 @@ function generateAuditDialog(isSchedule) {
     };
 }
 
+function generateReportAttachment(report, url) {
+    let fields = [];
+    let totalScore = 0;
+    let categoryCount = 0;
+    const categories = report.categories;
+
+    // Add scores per category
+    for(const key in categories) {
+        const category = categories[key];
+        totalScore += category.score;
+        categoryCount++;
+
+        fields.push({
+            short: true,
+            title: category.title,
+            value: `## \`${Math.floor(category.score * 100)}\``
+        });
+    }
+
+    // Add division
+    fields.push({
+        short: false,
+        title: '',
+        value: `---`
+    });
+
+    const avgScore = totalScore / categoryCount;
+    const color = getColorForScore(avgScore);
+
+    return {
+        text: `#### Lighthouse Audit for [${url}](${url})\n##### Average Score: \`${Math.floor(avgScore * 100)}\``,
+        color,
+        fields
+    };
+}
+
 module.exports = {
     generateAuditDialog,
+    generateReportAttachment,
 };

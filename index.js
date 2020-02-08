@@ -1,5 +1,5 @@
 const express = require('express');
-
+const reportGenerator = require('lighthouse/lighthouse-core/report/report-generator');
 const api = require('./api');
 const utils = require('./utils');
 const constants = require('./constants');
@@ -64,19 +64,41 @@ app.get('/lighthouse', async function(req, res) {
 });
 
 app.post('/run_audit', async function(req, res) {
-    const data = req.body.submission;
+    const body = req.body;
+    const {audit_url, auth_script} = body.submission;
+    let today = new Date();
+    let time = today.toLocaleTimeString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric'});
+
     try {
-        const response = await utils.lighthouse.runLighthouseAudit(data.url, data.authScript);
-        console.log(response);
-        // Run audit
-        // Store results
-        // Generate html file report
-        // build MM payload
-        // Send response to MM
+        res.send('OK'); // Dismissing modal with a response
+        await api.sendEphemeralPostToUser(body.user_id, body.channel_id, `Running audit report for [${audit_url}](${audit_url})!\nPlease wait for the audit to be completed`);
+        const lhs = await utils.lighthouse.runLighthouseAudit(audit_url, auth_script);
+        const reportAttachment = utils.response.generateReportAttachment(lhs, audit_url);
+        const audit = await store.audit.createAudit(body.user_id, JSON.stringify(lhs));
+        const payload = {
+            channel_id: body.channel_id,
+            message: `#lighthouse_audit\nPerformance auditing completed at \`${time}\`\n\nView full report [here](${CHATBOT_SERVER}/view_report/${audit._id})`,
+            props: {
+                attachments: [
+                    reportAttachment,
+                ],
+            },
+        };
+        await api.sendPostToChannel(payload);
     } catch(error) {
         // Respond with ephemeral error message
+        utils.common.logger.error(error);
+        await api.sendEphemeralPostToUser(body.user_id, body.channel_id, `Failed to run audit, please try again or contact an administrator.`);
     }
-    res.send();
+});
+
+app.get('/view_report/:id', async function(req, res) {
+    const id = req.params.id;
+    const report = await store.audit.getAuditReport(id);
+    // TODO: Return 404 page if report is not found
+    const html = reportGenerator.generateReportHtml(report);
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
 });
 
 app.listen(PORT, () => utils.common.logger.debug(`bot listening on port ${PORT}!`));

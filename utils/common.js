@@ -23,8 +23,21 @@ function generateTimestamp() {
     return Math.floor(new Date() / 1000);
 }
 
+function getColorForScore(score) {
+    let color = '';
+    if (score >= 0 && score < 0.5) {
+        color = '#FF4F42';
+    } else if (score >= 0.5 && score < 0.9) {
+        color = '#FFA400';
+    } else {
+        color = '#0BCE6B';
+    }
+    return color;
+}
+
 module.exports = {
+    logger,
     checkEnvVar,
     generateTimestamp,
-    logger,
+    getColorForScore,
 };
