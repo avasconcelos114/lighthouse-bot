@@ -66,6 +66,7 @@ app.get('/lighthouse', async function(req, res) {
 app.post('/run_audit', async function(req, res) {
     const body = req.body;
     const {audit_url, auth_script} = body.submission;
+    // TODO: separate audit run into function to be re-utilized in scheduled runs and ad-hoc slash commands
     let today = new Date();
     let time = today.toLocaleTimeString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric'});
 

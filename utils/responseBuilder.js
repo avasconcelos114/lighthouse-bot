@@ -1,4 +1,4 @@
-const {logger, getColorForScore} = require('./common');
+const {logger, getColorForScore, getEmojiForScore} = require('./common');
 
 function generateAuditDialog(isSchedule) {
     logger.debug('Attempting to build an audit dialog');
@@ -83,6 +83,9 @@ function generateReportAttachment(report, url) {
         });
     }
 
+    const avgScore = totalScore / categoryCount;
+    const color = getColorForScore(avgScore);
+
     // Add division
     fields.push({
         short: false,
@@ -90,13 +93,37 @@ function generateReportAttachment(report, url) {
         value: `---`
     });
 
-    const avgScore = totalScore / categoryCount;
-    const color = getColorForScore(avgScore);
+    // Audits
+    // TODO: Find way to let user select which audits will be available on the in-channel report
+    const audits = report.audits;
+    const timeToInteractive = generateAuditField(audits['interactive']);
+    const firstContentfulPaint = generateAuditField(audits['first-contentful-paint']);
+    const firstMeaningfulPaint = generateAuditField(audits['first-meaningful-paint']);
+    const speedIndex = generateAuditField(audits['speed-index']);
+    const firstCpuIdle = generateAuditField(audits['first-cpu-idle']);
+    const maxPotentialFid = generateAuditField(audits['max-potential-fid']);
+
+    fields.push(timeToInteractive);
+    fields.push(firstContentfulPaint);
+    fields.push(firstMeaningfulPaint);
+    fields.push(speedIndex);
+    fields.push(firstCpuIdle);
+    fields.push(maxPotentialFid);
 
     return {
         text: `#### Lighthouse Audit for [${url}](${url})\n##### Average Score: \`${Math.floor(avgScore * 100)}\``,
         color,
         fields
+    };
+}
+
+function generateAuditField(audit) {
+    const emoji = getEmojiForScore(audit.score);
+
+    return {
+        short: true,
+        title: audit.title,
+        value: `### ${emoji} \`${audit.displayValue}\``
     };
 }
 

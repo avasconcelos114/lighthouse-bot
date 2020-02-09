@@ -24,15 +24,25 @@ function generateTimestamp() {
 }
 
 function getColorForScore(score) {
-    let color = '';
+    let color = '#0BCE6B';
     if (score >= 0 && score < 0.5) {
         color = '#FF4F42';
     } else if (score >= 0.5 && score < 0.9) {
         color = '#FFA400';
-    } else {
-        color = '#0BCE6B';
     }
+
     return color;
+}
+
+function getEmojiForScore(score) {
+    let emoji = ':white_check_mark:';
+    if (score >= 0 && score < 0.5) {
+        emoji = ':x:';
+    } else if (score >= 0.5 && score < 0.9) {
+        emoji = ':warning:';
+    }
+
+    return emoji;
 }
 
 module.exports = {
@@ -40,4 +50,5 @@ module.exports = {
     checkEnvVar,
     generateTimestamp,
     getColorForScore,
+    getEmojiForScore,
 };
