@@ -38,7 +38,14 @@ router.get('/lighthouse', async function(req, res) {
         default:
             if (req_options[0] && urlPattern.test(req_options[0])) {
                 // Quick audit
-                await runAudit(req_options[0], req_data.user_id, req_data.channel_id);
+                const opts = {
+                    performance: '1',
+                    accessibility: '1',
+                    'best-practices': '1',
+                    pwa: '1',
+                    seo: '1',
+                };
+                await runAudit(req_options[0], req_data.user_id, req_data.channel_id, opts, res);
             } else {
                 // Audit dialog w/ options
                 const dialog = utils.response.generateAuditDialog();
@@ -55,9 +62,8 @@ router.get('/lighthouse', async function(req, res) {
 
 router.post('/run_audit', async function(req, res) {
     const body = req.body;
-    const {audit_url, auth_script} = body.submission;
-    res.send('OK'); // Dismissing modal with a response
-    await runAudit(audit_url, body.user_id, body.channel_id, auth_script);
+    const {audit_url} = body.submission;
+    await runAudit(audit_url, body.user_id, body.channel_id, body.submission, res);
 });
 
 router.get('/view_report/:id', async function(req, res) {
@@ -74,12 +80,21 @@ router.get('/view_report/:id', async function(req, res) {
     }
 });
 
-async function runAudit(url, user_id, channel_id, auth_script) {
+async function runAudit(url, user_id, channel_id, options, res) {
     let today = new Date();
     let time = today.toLocaleTimeString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric'});
+
+    const isValid = validateOptions(options);
+    if (!isValid) {
+        res.send({error: 'Please make sure you have at least one category enabled'});
+        return;
+    } else {
+        res.send(); // make sure dialog gets dismissed
+    }
+
     try {
         await api.sendEphemeralPostToUser(user_id, channel_id, `Running audit report for [${url}](${url})!\nPlease wait for the audit to be completed`);
-        const lhs = await utils.lighthouse.runLighthouseAudit(url, auth_script);
+        const lhs = await utils.lighthouse.runLighthouseAudit(url, options);
         const reportAttachment = utils.response.generateReportAttachment(lhs, url);
         const audit = await store.audit.createAudit(user_id, JSON.stringify(lhs));
         const payload = {
@@ -96,6 +111,19 @@ async function runAudit(url, user_id, channel_id, auth_script) {
         utils.common.logger.error(error);
         await api.sendEphemeralPostToUser(user_id, channel_id, `Failed to run audit, please try again or contact an administrator.`);
     }
+}
+
+function validateOptions(options) {
+    if (
+        options.performance === '0' &&
+        options.accessibility === '0' &&
+        options['best-practices'] === '0' &&
+        options.pwa === '0' &&
+        options.seo === '0'
+    ) {
+        return false;
+    }
+    return true;
 }
 
 module.exports = router;

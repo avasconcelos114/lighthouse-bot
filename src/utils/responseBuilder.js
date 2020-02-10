@@ -16,25 +16,6 @@ function generateAuditDialog(isSchedule) {
     };
     elements.push(url);
 
-    const throttle = {
-        display_name: 'Throttling',
-        name: 'throttling',
-        type: 'select',
-        default: 'enabled',
-        optional: false,
-        options: [
-           {
-             text: 'Enabled',
-             value: 'enabled',
-           },
-           {
-             text: 'Disabled',
-             value: 'disabled',
-           },
-         ]
-    };
-    elements.push(throttle);
-
     if (isSchedule) {
         title = 'Register Audit Schedule';
         const schedule = {
@@ -47,6 +28,20 @@ function generateAuditDialog(isSchedule) {
         elements.push(schedule);
     }
 
+    // Option dropdowns
+    const category_performance = generateDropdown('Performance', 'performance');
+    const category_accessibility = generateDropdown('Accessibility', 'accessibility');
+    const category_best_practices = generateDropdown('Best Practices', 'best-practices');
+    const category_pwa = generateDropdown('PWA', 'pwa');
+    const category_seo = generateDropdown('SEO', 'seo');
+
+    elements.push(category_performance);
+    elements.push(category_accessibility);
+    elements.push(category_best_practices);
+    elements.push(category_pwa);
+    elements.push(category_seo);
+
+    // Authentication script
     const authScript = {
         display_name: 'Authentication Script',
         name: 'auth_script',
@@ -111,9 +106,28 @@ function generateReportAttachment(report, url) {
     fields.push(maxPotentialFid);
 
     return {
-        text: `#### Lighthouse Audit for [${url}](${url})\n##### Average Score: \`${Math.floor(avgScore * 100)}\``,
+        text: `#### Lighthouse Audit for [${url}](${url})\n#### Average Score: \`${Math.floor(avgScore * 100)}\``,
         color,
         fields
+    };
+}
+
+function generateDropdown(display_name, name) {
+    return {
+        display_name,
+        name,
+        type: 'select',
+        default: '1',
+        options: [
+           {
+             text: 'Enabled',
+             value: '1',
+           },
+           {
+             text: 'Disabled',
+             value: '0',
+           },
+         ]
     };
 }
 

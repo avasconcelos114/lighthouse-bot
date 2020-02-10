@@ -7,7 +7,7 @@ const htmlReportAssets = require('lighthouse/lighthouse-core/report/html/html-re
 
 const {logger} = require('./common');
 
-async function runLighthouseAudit(url, authScript) {
+async function runLighthouseAudit(url, options) {
     try {
         const browser = await puppeteer.launch({
             args: [
@@ -21,12 +21,12 @@ async function runLighthouseAudit(url, authScript) {
 
         browser.on('targetchanged', async target => {
             // If user has send an authentication script, inject page with it
-            if (authScript) {
+            if (options.auth_script) {
                 const page = await target.page();
                 if (page) {
                     const client = await page.target().createCDPSession();
                     await client.send('Runtime.evaluate', {
-                        expression: `(${authScript.toString()})()`
+                        expression: `(${options.auth_script.toString()})()`
                     });
                 }
             }
@@ -34,11 +34,20 @@ async function runLighthouseAudit(url, authScript) {
 
         // Lighthouse will open URL. Puppeteer observes `targetchanged` and sets up network conditions.
         // Possible race condition.
-        const {lhr} = await lighthouse(url, {
+        let opts = {
             port: (new URL(browser.wsEndpoint())).port,
             output: 'json',
             logLevel: 'error',
-        });
+            onlyCategories: [],
+        };
+
+        if (options.performance === '1') opts.onlyCategories.push('performance');
+        if (options.accessibility === '1') opts.onlyCategories.push('accessibility');
+        if (options['best-practices'] === '1') opts.onlyCategories.push('best-practices');
+        if (options.pwa === '1') opts.onlyCategories.push('pwa');
+        if (options.seo === '1') opts.onlyCategories.push('seo');
+
+        const {lhr} = await lighthouse(url, opts);
         
         await browser.close();
         return lhr;
