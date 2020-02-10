@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const reportGenerator = require('lighthouse/lighthouse-core/report/report-generator');
 
 const api = require('../api');
 const constants = require('../constants');
@@ -65,7 +64,7 @@ router.get('/view_report/:id', async function(req, res) {
     res.setHeader('Content-Type', 'text/html');
     try {
         const report = await store.audit.getAuditReport(id);
-        const html = reportGenerator.generateReportHtml(report);
+        const html = utils.lighthouse.generateHtmlReport(report);
         res.send(html);
     } catch(error) {
         utils.common.logger.error(error);
