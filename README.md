@@ -44,9 +44,9 @@ docker run -d -p 3001:3001 -v $PWD/src:/home/app/src -e TZ="Asia/Seoul" -e PORT=
 ## Dealing with authentication screens
 Sometimes the page you need to test is behind an authentication screen. 
 
-In times like that you will need to inject JS into the authentication script section 
+In times like that you will need to inject JS into the authentication script section as an IIFE.
 
-Example script:
+Example script (works on Mattermost instances):
 ```
 (() => {
   document.querySelector('#loginId').value = 'username';
@@ -54,5 +54,3 @@ Example script:
   document.querySelector('#loginButton').click();
 })();
 ```
-
-Full reference: https://github.com/GoogleChrome/lighthouse/tree/master/docs/recipes/auth
