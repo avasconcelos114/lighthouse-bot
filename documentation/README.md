@@ -1,4 +1,4 @@
-# Lighthouse Auditing Bot
+# Lighthouse Auditing Bot for Mattermost
 ![](img/lighthouse-logo.png)
 ## Table of Contents
 * [Hackfest Proposal](#hackathon-proposal)

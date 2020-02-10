@@ -1,4 +1,5 @@
 const express = require('express');
+const fs = require('fs');
 const router = express.Router();
 
 const api = require('../api');
@@ -68,8 +69,8 @@ router.get('/view_report/:id', async function(req, res) {
         res.send(html);
     } catch(error) {
         utils.common.logger.error(error);
-        // TODO: Create generic 404 error page
-        res.send('404, report not found');
+        const html = fs.readFileSync(__dirname + '/../static/404.html', 'utf8');
+        res.send(html);
     }
 });
 
