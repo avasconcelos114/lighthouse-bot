@@ -12,10 +12,10 @@ RUN  apt-get update \
      && wget --quiet https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O /usr/sbin/wait-for-it.sh \
      && chmod +x /usr/sbin/wait-for-it.sh
 
+RUN npm install
+
 COPY . /home/app
 WORKDIR /home/app
 
 RUN npm install -g pm2
-RUN npm install puppeteer
-RUN npm install
 CMD [ "npm", "start" ]

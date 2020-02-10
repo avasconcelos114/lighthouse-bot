@@ -1,5 +1,6 @@
 const express = require('express');
 const reportGenerator = require('lighthouse/lighthouse-core/report/report-generator');
+
 const api = require('./api');
 const utils = require('./utils');
 const constants = require('./constants');
