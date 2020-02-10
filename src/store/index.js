@@ -11,12 +11,7 @@ const mongoServer = utils.common.checkEnvVar(constants.MONGO_SERVER);
 
 mongoose.connect(`mongodb://${mongoUsername}:${mongoPassword}@${mongoServer}/admin`, {useNewUrlParser: true, useUnifiedTopology: true});
 
-function checkConnection() {
-    return mongoose.connection.readyState;
-}
-
 module.exports = {
-    checkConnection,
     schedule,
     audit,
 };
