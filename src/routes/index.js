@@ -62,11 +62,16 @@ router.post('/run_audit', async function(req, res) {
 
 router.get('/view_report/:id', async function(req, res) {
     const id = req.params.id;
-    const report = await store.audit.getAuditReport(id);
-    // TODO: Return 404 page if report is not found
-    const html = reportGenerator.generateReportHtml(report);
     res.setHeader('Content-Type', 'text/html');
-    res.send(html);
+    try {
+        const report = await store.audit.getAuditReport(id);
+        const html = reportGenerator.generateReportHtml(report);
+        res.send(html);
+    } catch(error) {
+        utils.common.logger.error(error);
+        // TODO: Create generic 404 error page
+        res.send('404, report not found');
+    }
 });
 
 async function runAudit(url, user_id, channel_id, auth_script) {

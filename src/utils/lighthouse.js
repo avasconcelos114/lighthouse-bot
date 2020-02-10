@@ -35,8 +35,6 @@ async function runLighthouseAudit(url, authScript) {
             logLevel: 'error',
         });
         
-        console.log(`Lighthouse scores: ${Object.values(lhr.categories).map(c => c.score).join(', ')}`);
-        
         await browser.close();
         return lhr;
     } catch(error) {
