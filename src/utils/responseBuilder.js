@@ -28,6 +28,25 @@ function generateAuditDialog(isSchedule) {
         elements.push(schedule);
     }
 
+    const throttle = {
+        display_name: 'Throttling',
+        name: 'throttling',
+        type: 'select',
+        default: 'enabled',
+        optional: false,
+        options: [
+           {
+             text: 'Enabled',
+             value: '1',
+           },
+           {
+             text: 'Disabled',
+             value: '0',
+           },
+         ]
+    };
+    elements.push(throttle);
+
     // Option dropdowns
     const category_performance = generateDropdown('Performance', 'performance');
     const category_accessibility = generateDropdown('Accessibility', 'accessibility');

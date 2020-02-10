@@ -36,7 +36,7 @@ Ensure you have the following environment variables set when running the contain
 
 Example `run` command:
 ```
-docker run -d -p 3001:3001 -v $PWD/src:/home/app/src -e TZ="Asia/Seoul" -e PORT=3001 -e MATTERMOST_SERVER="https://192.168.1.129:8065" -e TOKEN="sd67j1cxepnc7meo3prf3krzgr" -e MONGO_USERNAME="root" -e MONGO_PASSWORD="test_passwd" -e MONGO_SERVER="192.168.1.129:27017" -e CHATBOT_SERVER="http://192.168.1.129:3001" --name lighthouse-bot lighthouse-bot
+docker run -d -p 3001:3001 -v $PWD/src:/home/app/src -e TZ="Asia/Seoul" -e PORT=3001 -e MATTERMOST_SERVER="http://192.168.1.129:8065" -e TOKEN="sd67j1cxepnc7meo3prf3krzgr" -e MONGO_USERNAME="root" -e MONGO_PASSWORD="test_passwd" -e MONGO_SERVER="192.168.1.129:27017" -e CHATBOT_SERVER="http://192.168.1.129:3001" --name lighthouse-bot lighthouse-bot
 ```
 
 4. [Register a slash command](https://docs.mattermost.com/developer/slash-commands.html#custom-slash-command) in Mattermost that sends a `GET` request to the `/lighthouse` endpoint
@@ -44,18 +44,15 @@ docker run -d -p 3001:3001 -v $PWD/src:/home/app/src -e TZ="Asia/Seoul" -e PORT=
 ## Dealing with authentication screens
 Sometimes the page you need to test is behind an authentication screen. 
 
-In times like that you may inject puppeteer configuration in the `Authentication Script` section of the dialog (when using the `/lighthouse` command)
+In times like that you will need to inject JS into the authentication script section 
 
 Example script:
 ```
-const emailInput = await page.$('input[type="email"]');
-await emailInput.type('admin@example.com');
-const passwordInput = await page.$('input[type="password"]');
-await passwordInput.type('password');
-await Promise.all([
-  page.$eval('.login-form', form => form.submit()),
-  page.waitForNavigation(),
-]);
+(() => {
+  document.querySelector('#loginId').value = 'username';
+  document.querySelector('#loginPassword').value = 'password';
+  document.querySelector('#loginButton').click();
+})();
 ```
 
 Full reference: https://github.com/GoogleChrome/lighthouse/tree/master/docs/recipes/auth

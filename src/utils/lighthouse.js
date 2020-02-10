@@ -19,18 +19,14 @@ async function runLighthouseAudit(url, options) {
             ]
         });
 
-        browser.on('targetchanged', async target => {
-            // If user has send an authentication script, inject page with it
-            if (options.auth_script) {
-                const page = await target.page();
-                if (page) {
-                    const client = await page.target().createCDPSession();
-                    await client.send('Runtime.evaluate', {
-                        expression: `(${options.auth_script.toString()})()`
-                    });
-                }
-            }
-        });
+        // Run authentication script (as injected javascript)
+        if (options.auth_script) {
+            const page = await browser.newPage();
+            await page.goto(url);
+            await page.waitForNavigation({waitUntil: 'networkidle0'});
+            await page.evaluate(options.auth_script);
+            await page.waitForNavigation();
+        }
 
         // Lighthouse will open URL. Puppeteer observes `targetchanged` and sets up network conditions.
         // Possible race condition.
@@ -39,6 +35,7 @@ async function runLighthouseAudit(url, options) {
             output: 'json',
             logLevel: 'error',
             onlyCategories: [],
+            emulatedFormFactor: 'desktop',
         };
 
         if (options.performance === '1') opts.onlyCategories.push('performance');
@@ -46,6 +43,7 @@ async function runLighthouseAudit(url, options) {
         if (options['best-practices'] === '1') opts.onlyCategories.push('best-practices');
         if (options.pwa === '1') opts.onlyCategories.push('pwa');
         if (options.seo === '1') opts.onlyCategories.push('seo');
+        if (options.throttling === '0') opts.throttlingMethod = 'provided';
 
         const {lhr} = await lighthouse(url, opts);
         
