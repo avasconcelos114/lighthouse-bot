@@ -38,12 +38,14 @@ async function runLighthouseAudit(url, options) {
             emulatedFormFactor: 'desktop',
         };
 
-        if (options.performance === '1') opts.onlyCategories.push('performance');
-        if (options.accessibility === '1') opts.onlyCategories.push('accessibility');
-        if (options['best-practices'] === '1') opts.onlyCategories.push('best-practices');
-        if (options.pwa === '1') opts.onlyCategories.push('pwa');
-        if (options.seo === '1') opts.onlyCategories.push('seo');
-        if (options.throttling === '0') opts.throttlingMethod = 'provided';
+        if (options.performance) opts.onlyCategories.push('performance');
+        if (options.accessibility) opts.onlyCategories.push('accessibility');
+        if (options['best-practices']) opts.onlyCategories.push('best-practices');
+        if (options.pwa) opts.onlyCategories.push('pwa');
+        if (options.seo) opts.onlyCategories.push('seo');
+        
+        // as throttling is enabled by default, disable it if explicitly unchecked
+        if (!options.throttling) opts.throttlingMethod = 'provided';
 
         const {lhr} = await lighthouse(url, opts);
         

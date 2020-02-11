@@ -15,9 +15,17 @@ router.get('/lighthouse', async function(req, res) {
     const urlPattern = /^https?:\/\//;
     switch(req_options[0]) {
         case 'help':
-            // TODO: Add help response with available options
-            break;
+            res.send({
+                text: '**Lighthouse Audit Bot - Slash Command Help**\n\n'
+                + '* `/lighthouse {url}` - Run a quick audit with default settings on a website\n'
+                + '* `/lighthouse` - Launch dialog to run ad-hoc audits with full control over options\n'
+                + '* `/lighthouse schedule` - Launch dialog to create an audit job with full control over options\n'
+                + '* `/lighthouse schedule list` - Show full list of schedules created\n'
+                + '* `/lighthouse schedule remove {id}` - Removes a scheduled audit job'
+            });
+            return;
         case 'schedule':
+            // TODO: implement schedule functionality
             if (req_options[1] && req_options[1] === 'list') {
                 // generate schedule list and return to user (ephemeral if possible)
 

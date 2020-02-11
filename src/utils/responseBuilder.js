@@ -28,32 +28,15 @@ function generateAuditDialog(isSchedule) {
         elements.push(schedule);
     }
 
-    const throttle = {
-        display_name: 'Throttling',
-        name: 'throttling',
-        type: 'select',
-        default: 'enabled',
-        optional: false,
-        options: [
-           {
-             text: 'Enabled',
-             value: '1',
-           },
-           {
-             text: 'Disabled',
-             value: '0',
-           },
-         ]
-    };
-    elements.push(throttle);
-
     // Option dropdowns
-    const category_performance = generateDropdown('Performance', 'performance');
-    const category_accessibility = generateDropdown('Accessibility', 'accessibility');
-    const category_best_practices = generateDropdown('Best Practices', 'best-practices');
-    const category_pwa = generateDropdown('PWA', 'pwa');
-    const category_seo = generateDropdown('SEO', 'seo');
+    const throttling = generateCheckbox('Throttling', 'throttling');
+    const category_performance = generateCheckbox('Performance', 'performance');
+    const category_accessibility = generateCheckbox('Accessibility', 'accessibility');
+    const category_best_practices = generateCheckbox('Best Practices', 'best-practices');
+    const category_pwa = generateCheckbox('PWA', 'pwa');
+    const category_seo = generateCheckbox('SEO', 'seo');
 
+    elements.push(throttling);
     elements.push(category_performance);
     elements.push(category_accessibility);
     elements.push(category_best_practices);
@@ -108,7 +91,6 @@ function generateReportAttachment(report, url) {
     });
 
     // Audits
-    // TODO: Find way to let user select which audits will be available on the in-channel report
     const audits = report.audits;
     const timeToInteractive = generateAuditField(audits['interactive']);
     const firstContentfulPaint = generateAuditField(audits['first-contentful-paint']);
@@ -131,22 +113,13 @@ function generateReportAttachment(report, url) {
     };
 }
 
-function generateDropdown(display_name, name) {
+function generateCheckbox(display_name, name) {
     return {
-        display_name,
+        display_name: `Enable ${display_name}`,
         name,
-        type: 'select',
-        default: '1',
-        options: [
-           {
-             text: 'Enabled',
-             value: '1',
-           },
-           {
-             text: 'Disabled',
-             value: '0',
-           },
-         ]
+        type: 'bool',
+        default: 'True',
+        optional: true,
     };
 }
 
