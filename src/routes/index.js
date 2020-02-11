@@ -25,12 +25,16 @@ router.get('/lighthouse', async function(req, res) {
                 + '* `/lighthouse schedule remove {id}` - Removes a scheduled audit job (You may input several IDs in the same command)'
             });
             return;
+        case 'stats':
+            // TODO: investigate ways to implement charting of a given url for past 5 audits
+            break;
         case 'schedule':
             if (req_options[1] && req_options[1] === 'list') {
                 // generate schedule list and return to user (ephemeral if possible)
                 const list = await store.schedule.getScheduleList();
                 let text = 'No scheduled jobs found';
                 if (list.length > 0) {
+                    // TODO: add username
                     text = '| id | Creator | URL | Schedule |\n| :--: | :--: | :--: | :--: |\n';
                     for(let schedule of list) {
                         text += `| ${schedule._id} | ${schedule.user_id} | ${schedule.audit_url} | ${schedule.schedule} |\n`;
@@ -46,7 +50,7 @@ router.get('/lighthouse', async function(req, res) {
                     return;
                 }
 
-                let idIdx = 2; // remove each id as it 
+                let idIdx = 2;
                 let deletedIds = [];
                 while(req_options[idIdx]) {
                     try {
@@ -145,6 +149,7 @@ router.post('/run_audit', async function(req, res) {
 });
 
 // Using as middleware in order to add schedules from app root
+// TODO: investigate more adequate pattern to make runAudit re-usable with current project structure
 router.post('/init_audit', async function(req, res) {
     const {url, user_id, channel_id, options} = req.body;
     res.send();

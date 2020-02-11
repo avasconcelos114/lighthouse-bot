@@ -5,7 +5,7 @@ const schema = new mongoose.Schema({
     created_date: Number, // unix timestamp
     user_id: String, // id of person who registered a given schedule
     channel_id: String, // The channel in which to post schedule audit reports at
-    
+    // TODO: add username to display in-channel
     // Audit options
     schedule: String,
     audit_url: String,
