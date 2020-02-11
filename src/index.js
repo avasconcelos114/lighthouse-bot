@@ -8,7 +8,6 @@ const PORT = utils.common.checkEnvVar(constants.PORT);
 
 const publicDirPath = path.join(__dirname, "./static");
 
-
 const app = express();
 app.use(express.json());
 app.use(express.static(publicDirPath));

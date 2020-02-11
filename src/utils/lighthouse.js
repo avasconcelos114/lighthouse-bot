@@ -22,8 +22,10 @@ async function runLighthouseAudit(url, options) {
         // Run authentication script (as injected javascript)
         if (options.auth_script) {
             const page = await browser.newPage();
-            await page.goto(url);
-            await page.waitForNavigation({waitUntil: 'networkidle0'});
+            await page.goto(url, {
+                waitUntil: 'networkidle0',
+            });
+            await page.waitForSelector(options.wait_selector, {visible: true});
             await page.evaluate(options.auth_script);
             await page.waitForNavigation();
         }

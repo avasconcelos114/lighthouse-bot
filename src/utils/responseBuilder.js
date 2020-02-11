@@ -1,6 +1,6 @@
 const {logger, getColorForScore, getEmojiForScore} = require('./common');
 
-function generateAuditDialog(isSchedule) {
+function generateAuditDialog(is_schedule) {
     logger.debug('Attempting to build an audit dialog');
     let title = 'Run Lighthouse Audit';
     let callback_id = 'auditcreate';
@@ -17,7 +17,7 @@ function generateAuditDialog(isSchedule) {
     };
     elements.push(url);
 
-    if (isSchedule) {
+    if (is_schedule) {
         title = 'Register Audit Schedule';
         const schedule = {
             display_name: 'Schedule',
@@ -45,14 +45,24 @@ function generateAuditDialog(isSchedule) {
     elements.push(category_seo);
 
     // Authentication script
-    const authScript = {
+    const auth_script = {
         display_name: 'Authentication Script',
         name: 'auth_script',
         type: 'textarea',
         help_text: 'If you need to test a page that requires an authenticated user, insert a code snippet that will authenticate puppeteer into your app before testing',
         optional: true,
     };
-    elements.push(authScript);
+    elements.push(auth_script);
+
+    const wait_selector = {
+        display_name: 'Wait Selector',
+        name: 'wait_selector',
+        type: 'text',
+        help_text: 'Please input a selector for an element in the authentication page (required when using an Authentication Script)',
+        placeholder: '#loginId',
+        optional: true,
+    };
+    elements.push(wait_selector);
 
     return {
         callback_id,

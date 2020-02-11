@@ -22,7 +22,7 @@ router.get('/lighthouse', async function(req, res) {
                 + '* `/lighthouse` - Launch dialog to run ad-hoc audits with full control over options\n'
                 + '* `/lighthouse schedule` - Launch dialog to create an audit job with full control over options\n'
                 + '* `/lighthouse schedule list` - Show full list of schedules created\n'
-                + '* `/lighthouse schedule remove {id}` - Removes a scheduled audit job'
+                + '* `/lighthouse schedule remove {id}` - Removes a scheduled audit job (You may input several IDs in the same command)'
             });
             return;
         case 'schedule':
@@ -31,9 +31,9 @@ router.get('/lighthouse', async function(req, res) {
                 const list = await store.schedule.getScheduleList();
                 let text = 'No scheduled jobs found';
                 if (list.length > 0) {
-                    text = '| id | Creator | Schedule |\n| :--: | :--: | :--: |\n';
+                    text = '| id | Creator | URL | Schedule |\n| :--: | :--: | :--: | :--: |\n';
                     for(let schedule of list) {
-                        text += `| ${schedule._id} | ${schedule.user_id} | ${schedule.schedule} |\n`;
+                        text += `| ${schedule._id} | ${schedule.user_id} | ${schedule.audit_url} | ${schedule.schedule} |\n`;
                     }
                 }
                 res.send({text});
@@ -45,17 +45,29 @@ router.get('/lighthouse', async function(req, res) {
                     });
                     return;
                 }
-                try {
-                    await store.schedule.deleteScheduleWithId(req_options[2]);
-                    res.send({
-                        text: 'Successfully deleted scheduled job!'
-                    });
-                } catch(error) {
-                    utils.common.logger.error(error);
-                    res.send({
-                        text: 'Failed to remove scheduled job.\nPlease make sure the ID you selected is valid with the `/lighthouse schedule list` command.'
-                    });
+
+                let idIdx = 2; // remove each id as it 
+                let deletedIds = [];
+                while(req_options[idIdx]) {
+                    try {
+                        await store.schedule.deleteScheduleWithId(req_options[idIdx]);
+                        utils.schedule.removeJob(req_options[idIdx]);
+                        deletedIds.push(req_options[idIdx]);
+                    } catch(error) {
+                        utils.common.logger.error(error);
+                        res.send({
+                            text: `Failed to remove scheduled job with ID ${req_options[idIdx]}.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`
+                        });
+                    }
+                    idIdx++;
                 }
+    
+                res.send({
+                    text: 'Successfully deleted scheduled job(s)! \n* ' + deletedIds.join('\n* ')
+                });
+            } else if(req_options[1] && req_options[1] === 'info') {
+                // TODO: Create attachment post with full information of scheduled job
+                // _id, selected categories, auth script, selector, user ...
             } else {
                 // if none found, launch create schedule dialog
                 const dialog = utils.response.generateAuditDialog(true);
@@ -71,11 +83,12 @@ router.get('/lighthouse', async function(req, res) {
             if (req_options[0] && urlPattern.test(req_options[0])) {
                 // Quick audit
                 const opts = {
-                    performance: '1',
-                    accessibility: '1',
-                    'best-practices': '1',
-                    pwa: '1',
-                    seo: '1',
+                    performance: 'True',
+                    accessibility: 'True',
+                    'best-practices': 'True',
+                    pwa: 'True',
+                    seo: 'True',
+                    throttling: 'False',
                 };
                 await runAudit(req_options[0], req_data.user_id, req_data.channel_id, opts);
             } else {
@@ -109,7 +122,7 @@ router.post('/create_schedule', async function(req, res) {
         };
         await runAudit(new_schedule.audit_url, new_schedule.user_id, new_schedule.channel_id, options);
     });
-            
+
     res.send();
 });
 
@@ -120,9 +133,9 @@ router.post('/run_audit', async function(req, res) {
     const body = req.body;
     const {audit_url} = body.submission;
 
-    const isValid = validateOptions(body.submission);
-    if (!isValid) {
-        res.send({error: 'Please make sure you have at least one category enabled'});
+    const validationError = validateOptions(body.submission);
+    if (validationError) {
+        res.send({error: validationError});
         return;
     } else {
         res.send(); // make sure dialog gets dismissed
@@ -164,9 +177,13 @@ function validateOptions(options) {
         options.pwa === '0' &&
         options.seo === '0'
     ) {
-        return false;
+        return 'Please make sure you have at least one category enabled';
     }
-    return true;
+
+    if (options.auth_script && !options.wait_selector) {
+        return 'Please input a wait selector when using an Authentication Script';
+    }
+    return null;
 }
 
 /********************************
