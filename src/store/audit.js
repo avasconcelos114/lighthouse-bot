@@ -2,21 +2,21 @@ const mongoose = require('mongoose');
 const utils = require('../utils');
 
 const schema = new mongoose.Schema({
-    createdDate: Number, // unix timestamp
-    userId: String, // id of person who ran an audit
+    created_date: Number, // unix timestamp
+    user_id: String, // id of person who ran an audit
     report: String, // json formatted string of report object
 });
 
 const AuditModel = mongoose.model('Audit', schema);
 
 async function createAudit(userId, report) {
-    const newAudit = new AuditModel({
-        createdDate: utils.common.generateTimestamp(),
-        userId: userId,
+    const new_audit = new AuditModel({
+        created_date: utils.common.generateTimestamp(),
+        user_id: userId,
         report: report,
     });
 
-    const data = await newAudit.save();
+    const data = await new_audit.save();
     return data;
 }
 

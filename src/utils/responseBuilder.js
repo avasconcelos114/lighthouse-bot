@@ -3,6 +3,7 @@ const {logger, getColorForScore, getEmojiForScore} = require('./common');
 function generateAuditDialog(isSchedule) {
     logger.debug('Attempting to build an audit dialog');
     let title = 'Run Lighthouse Audit';
+    let callback_id = 'auditcreate';
     let elements = [];
 
     const url = {
@@ -54,9 +55,9 @@ function generateAuditDialog(isSchedule) {
     elements.push(authScript);
 
     return {
-        callback_id: 'auditcreate',
-        title: title,
-        elements: elements,
+        callback_id,
+        title,
+        elements,
         notify_on_cancel: false,
     };
 }
