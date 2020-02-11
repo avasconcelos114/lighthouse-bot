@@ -89,7 +89,7 @@ router.get('/lighthouse', async function(req, res) {
                     pwa: 'True',
                     seo: 'True',
                     throttling: 'False',
-                };
+                };  
                 await runAudit(req_options[0], req_data.user_id, req_data.channel_id, opts);
             } else {
                 // Audit dialog w/ options
@@ -142,6 +142,13 @@ router.post('/run_audit', async function(req, res) {
     }
 
     await runAudit(audit_url, body.user_id, body.channel_id, body.submission);
+});
+
+// Using as middleware in order to add schedules from app root
+router.post('/init_audit', async function(req, res) {
+    const {url, user_id, channel_id, options} = req.body;
+    res.send();
+    await runAudit(url, user_id, channel_id, options);
 });
 
 async function runAudit(url, user_id, channel_id, options) {
