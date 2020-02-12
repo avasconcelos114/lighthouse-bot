@@ -28,8 +28,8 @@ async function openDialog(payload) {
     return data;
 }
 
-async function getUser(userId) {
-    const data = await doGet(`${MATTERMOST_URL}/api/v4/users/${userId}`);
+async function getUser(user_id) {
+    const data = await doGet(`${MATTERMOST_URL}/api/v4/users/${user_id}`);
     return data;
 }
 

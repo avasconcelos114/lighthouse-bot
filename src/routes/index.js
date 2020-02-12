@@ -34,10 +34,9 @@ router.get('/lighthouse', async function(req, res) {
                 const list = await store.schedule.getScheduleList();
                 let text = 'No scheduled jobs found';
                 if (list.length > 0) {
-                    // TODO: add username
                     text = '| id | Creator | URL | Schedule |\n| :--: | :--: | :--: | :--: |\n';
                     for(let schedule of list) {
-                        text += `| ${schedule._id} | ${schedule.user_id} | ${schedule.audit_url} | ${schedule.schedule} |\n`;
+                        text += `| ${schedule._id} | @${schedule.username} | ${schedule.audit_url} | ${schedule.schedule} |\n`;
                     }
                 }
                 res.send({text});
@@ -115,7 +114,9 @@ router.get('/lighthouse', async function(req, res) {
 router.post('/create_schedule', async function(req, res) {
     const {user_id, channel_id, submission} = req.body;
 
-    const new_schedule = await store.schedule.createSchedule({user_id, channel_id, ...submission});
+    const {username} = await api.getUser(user_id);
+
+    const new_schedule = await store.schedule.createSchedule({user_id, channel_id, ...submission, username});
     utils.schedule.scheduleJob(new_schedule, async function() {
         const options = {
             throttling: new_schedule.throttling,
