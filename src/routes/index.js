@@ -29,57 +29,64 @@ router.get('/lighthouse', async function(req, res) {
             // TODO: investigate ways to implement charting of a given url for past 5 audits
             break;
         case 'schedule':
-            if (req_options[1] && req_options[1] === 'list') {
-                // generate schedule list and return to user (ephemeral if possible)
-                const list = await store.schedule.getScheduleList();
-                let text = 'No scheduled jobs found';
-                if (list.length > 0) {
-                    text = '| id | Creator | URL | Schedule |\n| :--: | :--: | :--: | :--: |\n';
-                    for(let schedule of list) {
-                        text += `| ${schedule._id} | @${schedule.username} | ${schedule.audit_url} | ${schedule.schedule} |\n`;
+            switch (req_options[1]) {
+                case 'list':
+                case 'ls':
+                    // generate schedule list and return to user (ephemeral if possible)
+                    const list = await store.schedule.getScheduleList();
+                    let text = 'No scheduled jobs found';
+                    if (list.length > 0) {
+                        text = '| id | Creator | URL | Schedule |\n| :--: | :--: | :--: | :--: |\n';
+                        for(let schedule of list) {
+                            text += `| ${schedule._id} | @${schedule.username} | ${schedule.audit_url} | ${schedule.schedule} |\n`;
+                        }
                     }
-                }
-                res.send({text});
-            } else if (req_options[1] && req_options[1] === 'remove') {
-                // try to check if an 'id' was provided
-                if (!req_options[2]) {
-                    res.send({
-                        text: 'Please input the ID of the schedule you\'d like to remove as `/lighthouse remove {id}`'
-                    });
-                    return;
-                }
-
-                let id_idx = 2;
-                let deleted_ids = [];
-                while(req_options[id_idx]) {
-                    try {
-                        await store.schedule.deleteScheduleWithId(req_options[id_idx]);
-                        utils.schedule.removeJob(req_options[id_idx]);
-                        deleted_ids.push(req_options[id_idx]);
-                    } catch(error) {
-                        utils.common.logger.error(error);
+                    res.send({text});
+                    break;
+                case 'remove':
+                case 'rm':
+                    // try to check if an 'id' was provided
+                    if (!req_options[2]) {
                         res.send({
-                            text: `Failed to remove scheduled job with ID ${req_options[id_idx]}.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`
+                            text: 'Please input the ID of the schedule you\'d like to remove as `/lighthouse remove {id}`'
                         });
+                        return;
                     }
-                    id_idx++;
-                }
-    
-                res.send({
-                    text: 'Successfully deleted scheduled job(s)! \n* ' + deleted_ids.join('\n* ')
-                });
-            } else if(req_options[1] && req_options[1] === 'info') {
-                // TODO: Create attachment post with full information of scheduled job
-                // _id, selected categories, auth script, selector, user ...
-            } else {
-                // if none found, launch create schedule dialog
-                const dialog = utils.response.generateAuditDialog(true);
-                const payload = {
-                    trigger_id: req_data.trigger_id,
-                    url: `${CHATBOT_SERVER}/create_schedule`,
-                    dialog,
-                };
-                await api.openDialog(payload);
+
+                    let id_idx = 2;
+                    let deleted_ids = [];
+                    while(req_options[id_idx]) {
+                        try {
+                            await store.schedule.deleteScheduleWithId(req_options[id_idx]);
+                            utils.schedule.removeJob(req_options[id_idx]);
+                            deleted_ids.push(req_options[id_idx]);
+                        } catch(error) {
+                            utils.common.logger.error(error);
+                            res.send({
+                                text: `Failed to remove scheduled job with ID ${req_options[id_idx]}.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`
+                            });
+                        }
+                        id_idx++;
+                    }
+        
+                    res.send({
+                        text: 'Successfully deleted scheduled job(s)! \n* ' + deleted_ids.join('\n* ')
+                    });
+                    break;
+
+                case 'info':
+                    // TODO: Create attachment post with full information of scheduled job
+                    // _id, selected categories, auth script, selector, user ...
+                    break;
+                default:
+                    // if none found, launch create schedule dialog
+                    const dialog = utils.response.generateAuditDialog(true);
+                    const payload = {
+                        trigger_id: req_data.trigger_id,
+                        url: `${CHATBOT_SERVER}/create_schedule`,
+                        dialog,
+                    };
+                    await api.openDialog(payload);
             }
             break;
         default:

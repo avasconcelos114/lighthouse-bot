@@ -7,6 +7,7 @@ module.exports = {
         instances: 1,
         autorestart: true,
         watch: process.env.NODE_ENV !== 'production' ? path.resolve(__dirname) : false,
+        node_args: ['--experimental-worker'],
         max_memory_restart: '1G'
     }]
 };

@@ -1,5 +1,7 @@
 const puppeteer = require('puppeteer');
 const lighthouse = require('lighthouse');
+const {Worker, isMainThread, parentPort, workerData} = require('worker_threads');
+
 const fs = require('fs');
 
 const {replaceStrings} = require('lighthouse/lighthouse-core/report/report-generator');
@@ -7,7 +9,14 @@ const htmlReportAssets = require('lighthouse/lighthouse-core/report/html/html-re
 
 const {logger} = require('./common');
 
-async function runLighthouseAudit(url, options) {
+// Auto-runs puppeteer when run as a worker
+// main thread should pass down URL and lighthouse options as workerData
+if (!isMainThread) {
+    const {url, options} = workerData;
+    launchPuppeteer(url, options);
+}
+
+async function launchPuppeteer(url, options) {
     try {
         const browser = await puppeteer.launch({
             args: [
@@ -50,12 +59,28 @@ async function runLighthouseAudit(url, options) {
         if (options.throttling === 'False') opts.throttlingMethod = 'provided';
 
         const {lhr} = await lighthouse(url, opts);
-        
+
         await browser.close();
-        return lhr;
+
+        // Return response back to main thread
+        parentPort.postMessage(lhr);
+        return;
     } catch(error) {
         logger.error(error.toString());
     }
+}
+
+// This function spawns a worker thread that will handle launching puppeteer and returning results
+async function runLighthouseAudit(url, options) {
+    return new Promise((resolve, reject) => {
+        const worker = new Worker(__filename, {workerData: {url, options}});
+        worker.on('message', resolve);
+        worker.on('error', reject);
+        worker.on('exit', (code) => {
+            if (code !== 0)
+            reject(new Error(`Worker stopped with exit code ${code}`));
+        });
+    });
 }
 
 function generateHtmlReport(lhr) {
