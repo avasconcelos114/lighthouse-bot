@@ -24,6 +24,7 @@ app.listen(PORT, async function() {
                 throttling: schedule.throttling,
                 performance: schedule.performance,
                 accessibility: schedule.accessibility,
+                'best-practices': schedule['best-practices'],
                 pwa: schedule.pwa,
                 seo: schedule.seo,
             };

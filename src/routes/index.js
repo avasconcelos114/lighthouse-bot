@@ -122,6 +122,7 @@ router.post('/create_schedule', async function(req, res) {
             throttling: new_schedule.throttling,
             performance: new_schedule.performance,
             accessibility: new_schedule.accessibility,
+            'best-practices': new_schedule['best-practices'],
             pwa: new_schedule.pwa,
             seo: new_schedule.seo,
         };
