@@ -15,5 +15,6 @@ module.exports = {
     "rules": {
         "semi": 1,
         "object-curly-spacing": 2,
+        "no-case-declarations": 0,
     }
 };
