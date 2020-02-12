@@ -46,7 +46,7 @@ async function runLighthouseAudit(url, options) {
         if (options.pwa === 'True') opts.onlyCategories.push('pwa');
         if (options.seo === 'True') opts.onlyCategories.push('seo');
         
-        // as throttling is enabled by default, disable it if explicitly unchecked
+        // as throttling is enabled by default in lighthouse, disable it if explicitly unchecked
         if (options.throttling === 'False') opts.throttlingMethod = 'provided';
 
         const {lhr} = await lighthouse(url, opts);

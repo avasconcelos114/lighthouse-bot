@@ -1,4 +1,4 @@
-const {logger, getColorForScore, getEmojiForScore} = require('./common');
+const {logger, getScoreElement} = require('./common');
 
 function generateAuditDialog(is_schedule) {
     logger.debug('Attempting to build an audit dialog');
@@ -31,17 +31,21 @@ function generateAuditDialog(is_schedule) {
 
     // Option dropdowns
     const throttling = generateCheckbox('Throttling', 'throttling');
-    const category_performance = generateCheckbox('Performance', 'performance');
-    const category_accessibility = generateCheckbox('Accessibility', 'accessibility');
-    const category_best_practices = generateCheckbox('Best Practices', 'best-practices');
-    const category_pwa = generateCheckbox('PWA', 'pwa');
-    const category_seo = generateCheckbox('SEO', 'seo');
-
     elements.push(throttling);
+
+    const category_performance = generateCheckbox('Performance', 'performance');
     elements.push(category_performance);
+
+    const category_accessibility = generateCheckbox('Accessibility', 'accessibility');
     elements.push(category_accessibility);
+
+    const category_best_practices = generateCheckbox('Best Practices', 'best-practices');
     elements.push(category_best_practices);
+
+    const category_pwa = generateCheckbox('PWA', 'pwa');
     elements.push(category_pwa);
+
+    const category_seo = generateCheckbox('SEO', 'seo');
     elements.push(category_seo);
 
     // Authentication script
@@ -74,15 +78,15 @@ function generateAuditDialog(is_schedule) {
 
 function generateReportAttachment(report, url) {
     let fields = [];
-    let totalScore = 0;
-    let categoryCount = 0;
+    let total_score = 0;
+    let category_count = 0;
     const categories = report.categories;
 
     // Add scores per category
     for(const key in categories) {
         const category = categories[key];
-        totalScore += category.score;
-        categoryCount++;
+        total_score += category.score;
+        category_count++;
 
         fields.push({
             short: true,
@@ -91,8 +95,8 @@ function generateReportAttachment(report, url) {
         });
     }
 
-    const avgScore = totalScore / categoryCount;
-    const color = getColorForScore(avgScore);
+    const avg_score = total_score / category_count;
+    const color = getScoreElement(avg_score, 'color');
 
     // Add division
     fields.push({
@@ -103,22 +107,22 @@ function generateReportAttachment(report, url) {
 
     // Audits
     const audits = report.audits;
-    const timeToInteractive = generateAuditField(audits['interactive']);
-    const firstContentfulPaint = generateAuditField(audits['first-contentful-paint']);
-    const firstMeaningfulPaint = generateAuditField(audits['first-meaningful-paint']);
-    const speedIndex = generateAuditField(audits['speed-index']);
-    const firstCpuIdle = generateAuditField(audits['first-cpu-idle']);
-    const maxPotentialFid = generateAuditField(audits['max-potential-fid']);
+    const tti = generateAuditField(audits['interactive']);
+    const fcp = generateAuditField(audits['first-contentful-paint']);
+    const fmp = generateAuditField(audits['first-meaningful-paint']);
+    const si = generateAuditField(audits['speed-index']);
+    const fci = generateAuditField(audits['first-cpu-idle']);
+    const mpfid = generateAuditField(audits['max-potential-fid']);
 
-    fields.push(timeToInteractive);
-    fields.push(firstContentfulPaint);
-    fields.push(firstMeaningfulPaint);
-    fields.push(speedIndex);
-    fields.push(firstCpuIdle);
-    fields.push(maxPotentialFid);
+    fields.push(tti);
+    fields.push(fcp);
+    fields.push(fmp);
+    fields.push(si);
+    fields.push(fci);
+    fields.push(mpfid);
 
     return {
-        text: `#### Lighthouse Audit for [${url}](${url})\n#### Average Score: \`${Math.floor(avgScore * 100)}\``,
+        text: `#### Lighthouse Audit for [${url}](${url})\n#### Average Score: \`${Math.floor(avg_score * 100)}\``,
         color,
         fields
     };
@@ -135,7 +139,7 @@ function generateCheckbox(display_name, name) {
 }
 
 function generateAuditField(audit) {
-    const emoji = getEmojiForScore(audit.score);
+    const emoji = getScoreElement(audit.score, 'emoji');
 
     return {
         short: true,

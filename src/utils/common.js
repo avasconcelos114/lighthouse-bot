@@ -1,10 +1,10 @@
 const logger = {
-    debug: function debug(message) {
+    debug: function(message) {
         const timestamp = new Date().toString();
         console.log('\x1b[36m%s\x1b[0m', `${timestamp} - ${message}`);
     },
     
-    error: function error(message) {
+    error: function(message) {
         const timestamp = new Date().toString();
         console.error('\x1b[31m%s\x1b[0m', `${timestamp} - ${message}`);
     }
@@ -23,32 +23,22 @@ function generateTimestamp() {
     return Math.floor(new Date() / 1000);
 }
 
-function getColorForScore(score) {
+function getScoreElement(score, type) {
     let color = '#0BCE6B';
-    if (score >= 0 && score < 0.5) {
-        color = '#FF4F42';
-    } else if (score >= 0.5 && score < 0.9) {
-        color = '#FFA400';
-    }
-
-    return color;
-}
-
-function getEmojiForScore(score) {
     let emoji = ':white_check_mark:';
     if (score >= 0 && score < 0.5) {
+        color = '#FF4F42';
         emoji = ':x:';
     } else if (score >= 0.5 && score < 0.9) {
+        color = '#FFA400';
         emoji = ':warning:';
     }
-
-    return emoji;
+    return type === 'color' ? color : emoji;
 }
 
 module.exports = {
     logger,
     checkEnvVar,
     generateTimestamp,
-    getColorForScore,
-    getEmojiForScore,
+    getScoreElement,
 };

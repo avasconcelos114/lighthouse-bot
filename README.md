@@ -54,3 +54,10 @@ Example script (works on Mattermost instances):
   document.querySelector('#loginButton').click();
 })();
 ```
+
+Current Tasks:
+- [ ] Implementing trend charts for audit results
+- [ ] Add usernames to schedule schemas so that they can be easily viewed through `/lighthouse schedule list`
+- [ ] Implementing `/lighthouse schedule info {id}` to get full details of a given job
+- [ ] Add unit testing with Jest or AVA
+- [ ] Write documentation to make command usage clearer

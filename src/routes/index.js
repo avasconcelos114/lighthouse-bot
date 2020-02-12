@@ -13,7 +13,7 @@ const CHATBOT_SERVER = utils.common.checkEnvVar(constants.CHATBOT_SERVER);
 router.get('/lighthouse', async function(req, res) {
     const req_data = req.query;
     const req_options = req_data.text.split(' ');
-    const urlPattern = /^https?:\/\//;
+    const url_pattern = /^https?:\/\//;
     switch(req_options[0]) {
         case 'help':
             res.send({
@@ -50,24 +50,24 @@ router.get('/lighthouse', async function(req, res) {
                     return;
                 }
 
-                let idIdx = 2;
-                let deletedIds = [];
-                while(req_options[idIdx]) {
+                let id_idx = 2;
+                let deleted_ids = [];
+                while(req_options[id_idx]) {
                     try {
-                        await store.schedule.deleteScheduleWithId(req_options[idIdx]);
-                        utils.schedule.removeJob(req_options[idIdx]);
-                        deletedIds.push(req_options[idIdx]);
+                        await store.schedule.deleteScheduleWithId(req_options[id_idx]);
+                        utils.schedule.removeJob(req_options[id_idx]);
+                        deleted_ids.push(req_options[id_idx]);
                     } catch(error) {
                         utils.common.logger.error(error);
                         res.send({
-                            text: `Failed to remove scheduled job with ID ${req_options[idIdx]}.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`
+                            text: `Failed to remove scheduled job with ID ${req_options[id_idx]}.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`
                         });
                     }
-                    idIdx++;
+                    id_idx++;
                 }
     
                 res.send({
-                    text: 'Successfully deleted scheduled job(s)! \n* ' + deletedIds.join('\n* ')
+                    text: 'Successfully deleted scheduled job(s)! \n* ' + deleted_ids.join('\n* ')
                 });
             } else if(req_options[1] && req_options[1] === 'info') {
                 // TODO: Create attachment post with full information of scheduled job
@@ -84,7 +84,7 @@ router.get('/lighthouse', async function(req, res) {
             }
             break;
         default:
-            if (req_options[0] && urlPattern.test(req_options[0])) {
+            if (req_options[0] && url_pattern.test(req_options[0])) {
                 // Quick audit
                 const opts = {
                     performance: 'True',
@@ -121,8 +121,8 @@ router.post('/create_schedule', async function(req, res) {
             throttling: new_schedule.throttling,
             performance: new_schedule.performance,
             accessibility: new_schedule.accessibility,
-            pwa: new_schedule.throttling,
-            seo: new_schedule.throttling,
+            pwa: new_schedule.pwa,
+            seo: new_schedule.seo,
         };
         await runAudit(new_schedule.audit_url, new_schedule.user_id, new_schedule.channel_id, options);
     });
@@ -137,9 +137,9 @@ router.post('/run_audit', async function(req, res) {
     const body = req.body;
     const {audit_url} = body.submission;
 
-    const validationError = validateOptions(body.submission);
-    if (validationError) {
-        res.send({error: validationError});
+    const validation_error = validateOptions(body.submission);
+    if (validation_error) {
+        res.send({error: validation_error});
         return;
     } else {
         res.send(); // make sure dialog gets dismissed
@@ -163,14 +163,14 @@ async function runAudit(url, user_id, channel_id, options) {
     try {
         await api.sendEphemeralPostToUser(user_id, channel_id, `Running audit report for [${url}](${url})!\nPlease wait for the audit to be completed`);
         const lhs = await utils.lighthouse.runLighthouseAudit(url, options);
-        const reportAttachment = utils.response.generateReportAttachment(lhs, url);
+        const report = utils.response.generateReportAttachment(lhs, url);
         const audit = await store.audit.createAudit(user_id, JSON.stringify(lhs));
         const payload = {
             channel_id: channel_id,
             message: `#lighthouse_audit\nPerformance auditing completed at \`${time}\`\n\nView full report [here](${CHATBOT_SERVER}/view_report/${audit._id})`,
             props: {
                 attachments: [
-                    reportAttachment,
+                    report,
                 ],
             },
         };

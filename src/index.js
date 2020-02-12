@@ -6,12 +6,12 @@ const store = require('./store');
 const routes = require('./routes');
 const PORT = utils.common.checkEnvVar(constants.PORT);
 
-const publicDirPath = path.join(__dirname, "./static");
+const static_path = path.join(__dirname, "./static");
 
 const app = express();
 require('run-middleware')(app);
 app.use(express.json());
-app.use(express.static(publicDirPath));
+app.use(express.static(static_path));
     
 app.use('/', routes);
     
@@ -24,8 +24,8 @@ app.listen(PORT, async function() {
                 throttling: schedule.throttling,
                 performance: schedule.performance,
                 accessibility: schedule.accessibility,
-                pwa: schedule.throttling,
-                seo: schedule.throttling,
+                pwa: schedule.pwa,
+                seo: schedule.seo,
             };
 
             app.runMiddleware('/init_audit', {
