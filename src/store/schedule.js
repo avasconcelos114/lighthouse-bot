@@ -4,8 +4,12 @@ const utils = require('../utils');
 const schema = new mongoose.Schema({
     created_date: Number, // unix timestamp
     user_id: String, // id of person who registered a given schedule
-    channel_id: String, // The channel in which to post schedule audit reports at
     username: String,
+    channel_id: String, // The channel in which to post schedule audit reports at
+    channel_display_name: String,
+    team_id: String,
+    team_display_name: String,
+
     // Audit options
     schedule: String,
     audit_url: String,
@@ -25,8 +29,11 @@ async function createSchedule(payload) {
     const new_schedule = new ScheduleModel({
         created_date: utils.common.generateTimestamp(),
         user_id: payload.user_id,
-        channel_id: payload.channel_id,
         username: payload.username,
+        channel_id: payload.channel_id,
+        channel_display_name: payload.channel_display_name,
+        team_id: payload.team_id,
+        team_display_name: payload.team_display_name,
         schedule: payload.schedule,
         audit_url: payload.audit_url,
         auth_script: payload.auth_script,

@@ -32,7 +32,7 @@ Ensure you have the following environment variables set when running the contain
 | MONGO_PASSWORD | test_passwd | Auth password for a mongodb server |
 | MONGO_SERVER | 192.168.1.10:27017 | The endpoint for a mongodb server |
 | CHATBOT_SERVER | http://192.168.1.10:3001 | IP to be used by this chatbot (needed to set URL endpoints in Message Attachments) |
-| TZ | Asia/Seoul | A timezone that will be used for timestamps when logging |
+| TZ | Asia/Seoul | The timezone value that will be used on server (important for job scheduling) |
 
 Example `run` command:
 ```
@@ -62,4 +62,5 @@ Current Tasks:
 - [ ] Add unit testing with Jest or AVA
 - [ ] Write documentation to make command usage clearer
 - [ ] Add more comprehensive logging
-- [ ] Investigate the possibility of using workers to run audits so that multiple audits can run simultaneously
+- [x] Investigate the possibility of using workers to run audits so that multiple audits can run simultaneously
+- [ ] Investigate possibility of accounting for the timezone of user who registers a job (instead of always following server time)

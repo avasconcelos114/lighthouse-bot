@@ -28,6 +28,7 @@ router.get('/lighthouse', async function(req, res) {
         case 'stats':
             // TODO: investigate ways to implement charting of a given url for past 5 audits
             break;
+        case 'jobs':
         case 'schedule':
             switch (req_options[1]) {
                 case 'list':
@@ -36,16 +37,15 @@ router.get('/lighthouse', async function(req, res) {
                     const list = await store.schedule.getScheduleList();
                     let text = 'No scheduled jobs found';
                     if (list.length > 0) {
-                        text = '| id | Creator | URL | Schedule |\n| :--: | :--: | :--: | :--: |\n';
+                        text = '| id | Creator | Channel | Team | URL | Schedule |\n| :--: | :--: | :--: | :--: | :--: | :--: | \n';
                         for(let schedule of list) {
-                            text += `| ${schedule._id} | @${schedule.username} | ${schedule.audit_url} | ${schedule.schedule} |\n`;
+                            text += `| ${schedule._id} | @${schedule.username} | ${schedule.channel_display_name} | ${schedule.team_display_name} | ${schedule.audit_url} | ${schedule.schedule} |\n`;
                         }
                     }
                     res.send({text});
                     break;
                 case 'remove':
                 case 'rm':
-                    // try to check if an 'id' was provided
                     if (!req_options[2]) {
                         res.send({
                             text: 'Please input the ID of the schedule you\'d like to remove as `/lighthouse remove {id}`'
@@ -119,24 +119,42 @@ router.get('/lighthouse', async function(req, res) {
 * Schedule Creation
 *********************************/
 router.post('/create_schedule', async function(req, res) {
-    const {user_id, channel_id, submission} = req.body;
-
+    const {user_id, channel_id, team_id, submission} = req.body;
+    
     const {username} = await api.getUser(user_id);
+    const channel = await api.getChannel(channel_id);
+    const team = await api.getTeam(team_id);
+    try {
+        const new_schedule = await store.schedule.createSchedule({
+            user_id,
+            channel_id,
+            username,
+            channel_display_name: channel.display_name,
+            team_display_name: team.display_name,
+            ...submission,
+        });
+    
+        utils.schedule.scheduleJob(new_schedule, async function() {
+            const options = {
+                throttling: new_schedule.throttling,
+                performance: new_schedule.performance,
+                accessibility: new_schedule.accessibility,
+                'best-practices': new_schedule['best-practices'],
+                pwa: new_schedule.pwa,
+                seo: new_schedule.seo,
+                auth_script: new_schedule.auth_script,
+                wait_selector: new_schedule.wait_selector,
+            };
+            await runAudit(new_schedule.audit_url, new_schedule.user_id, new_schedule.channel_id, options);
+        });
 
-    const new_schedule = await store.schedule.createSchedule({user_id, channel_id, ...submission, username});
-    utils.schedule.scheduleJob(new_schedule, async function() {
-        const options = {
-            throttling: new_schedule.throttling,
-            performance: new_schedule.performance,
-            accessibility: new_schedule.accessibility,
-            'best-practices': new_schedule['best-practices'],
-            pwa: new_schedule.pwa,
-            seo: new_schedule.seo,
-            auth_script: new_schedule.auth_script,
-            wait_selector: new_schedule.wait_selector,
-        };
-        await runAudit(new_schedule.audit_url, new_schedule.user_id, new_schedule.channel_id, options);
-    });
+        let text = 'Successfully scheduled a new job!\n\n| id | Creator | Channel | Team | URL | Schedule |\n| :--: | :--: | :--: | :--: | :--: | :--: | \n';
+        text += `| ${new_schedule._id} | @${new_schedule.username} | ${new_schedule.channel_display_name} | ${new_schedule.team_display_name} | ${new_schedule.audit_url} | ${new_schedule.schedule} |\n`;
+        await api.sendEphemeralPostToUser(user_id, channel_id, text);
+    } catch(error) {
+        utils.common.logger.error(error);
+        await api.sendEphemeralPostToUser(user_id, channel_id, 'Failed to schedule a job, please try again or contact an administrator for support.');
+    }
 
     res.send();
 });

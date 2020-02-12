@@ -10,16 +10,26 @@ async function sendPostToChannel(payload) {
     return data;
 }
 
-async function sendEphemeralPostToUser(userId, channelId, message) {
+async function sendEphemeralPostToUser(user_id, channel_id, message) {
     const payload = {
-        user_id: userId,
+        user_id,
         post: {
-            channel_id: channelId,
+            channel_id,
             message,
         }
     };
 
     const data = await doPost(`${MATTERMOST_URL}/api/v4/posts/ephemeral`, payload);
+    return data;
+}
+
+async function getTeam(team_id) {
+    const data = await doGet(`${MATTERMOST_URL}/api/v4/teams/${team_id}`);
+    return data;
+}
+
+async function getChannel(channel_id) {
+    const data = await doGet(`${MATTERMOST_URL}/api/v4/channels/${channel_id}`);
     return data;
 }
 
@@ -74,8 +84,10 @@ async function doPost(url, data) {
 }
 
 module.exports = {
-    openDialog,
     sendPostToChannel,
     sendEphemeralPostToUser,
+    getTeam,
+    getChannel,
+    openDialog,
     getUser,
 };
