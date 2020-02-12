@@ -27,15 +27,17 @@ app.listen(PORT, async function() {
                 'best-practices': schedule['best-practices'],
                 pwa: schedule.pwa,
                 seo: schedule.seo,
+                auth_script: schedule.auth_script,
+                wait_selector: schedule.wait_selector,
             };
 
             app.runMiddleware('/init_audit', {
                 method: 'POST',
                 body: {
-                    url: schedule.audit_url,
+                    audit_url: schedule.audit_url,
                     user_id: schedule.user_id,
                     channel_id: schedule.channel_id,
-                    options
+                    options,
                 }
             });
         });

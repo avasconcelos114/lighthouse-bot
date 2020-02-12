@@ -125,6 +125,8 @@ router.post('/create_schedule', async function(req, res) {
             'best-practices': new_schedule['best-practices'],
             pwa: new_schedule.pwa,
             seo: new_schedule.seo,
+            auth_script: new_schedule.auth_script,
+            wait_selector: new_schedule.wait_selector,
         };
         await runAudit(new_schedule.audit_url, new_schedule.user_id, new_schedule.channel_id, options);
     });
@@ -153,9 +155,9 @@ router.post('/run_audit', async function(req, res) {
 // Using as middleware in order to add schedules from app root
 // TODO: investigate more adequate pattern to make runAudit re-usable with current project structure
 router.post('/init_audit', async function(req, res) {
-    const {url, user_id, channel_id, options} = req.body;
+    const {audit_url, user_id, channel_id, options} = req.body;
     res.send();
-    await runAudit(url, user_id, channel_id, options);
+    await runAudit(audit_url, user_id, channel_id, options);
 });
 
 async function runAudit(url, user_id, channel_id, options) {
