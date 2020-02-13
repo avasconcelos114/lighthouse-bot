@@ -84,7 +84,7 @@ pm2 start ecosystem.config.js
 ```
 
 ## Deployment
-
+Deploying this chatbot is done in the same way as the [development environment setup](#development), with the exception that you would set the `NODE_ENV` variable to `production`, as well as not do any volume binding to the host when running the chatbot with Docker.
 
 ## Tutorials  
 While typing `/lighthouse help` provides you with a list of available commands for the Lighthouse chatbot, below are a few step-by-step tutorials that may help you with the most important aspects of using this chatbot.  

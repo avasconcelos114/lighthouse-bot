@@ -20,6 +20,6 @@ And to prevent Puppeteer from attempting to run the audit before the screen has 
 
 ![](/documentation/img/auth-script-config.png)
 
-# **Note:** Providing an `Await Selector` value is __required__ when using an `Authentication Script`. Failure to provide it will return you a validation error message from the chatbot
+**Note:** Providing an `Await Selector` value is __required__ when using an `Authentication Script`. Failure to provide it will return you a validation error message from the chatbot
 
 ![](/documentation/img/auth-script-validation.png)
