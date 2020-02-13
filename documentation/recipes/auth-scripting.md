@@ -1,7 +1,5 @@
 # Authentication Scripting
 
----
-
 ## Explanation
 Sometimes the page you need to test is behind an authentication screen. 
 
@@ -19,6 +17,8 @@ Example script (works on Mattermost instances):
 And to prevent Puppeteer from attempting to run the audit before the screen has fully rendered, you must add the selector (`class` or `id`) of an element on the login screen of your website inside the `Await Selector` field.
 
 ![](/documentation/img/auth-script-config.png)
+
+---
 
 **Note:** Providing an `Await Selector` value is __required__ when using an `Authentication Script`. Failure to provide it will return you a validation error message from the chatbot
 

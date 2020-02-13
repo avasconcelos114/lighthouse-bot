@@ -1,7 +1,5 @@
 # Scheduling Audit Jobs
 
----
-
 ## Explanation
 Scheduling jobs lies at the core of being able to consistently and effortlessly audit your sites.
 
@@ -27,17 +25,22 @@ Run the `/lighthouse jobs` command to launch a dialog with the following options
 * **Await Selector** (required when using an `Authentication Script`)
 
 Note: The `Schedule` field must be filled in the CRON format, consult [this link](http://www.nncron.ru/help/EN/working/cron-format.htm) to verify how to set a job to your desired frequency  
+---
 
 ## Listing jobs
 Run the `/lighthouse jobs ls` command to receive a list of all existing audit jobs
 
 ![](/documentation/img/scheduling-ls.png)
 
+---
+
 ## Removing a job
 Run the `/lighthouse jobs rm {id}` command to remove a registered job.
 
 Note: In order to remove a job, you must use a unique `id` value that can be verified by running `/lighthouse jobs ls`
 ![](/documentation/img/scheduling-rm.png)
+
+---
 
 ## Verifying configuration
 Run the `/lighthouse jobs info {id}` command to view a job's configuration.
