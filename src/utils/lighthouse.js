@@ -85,7 +85,6 @@ async function runLighthouseAudit(url, options) {
 
 function generateHtmlReport(lhr) {
     const REPORT_TEMPLATE = fs.readFileSync(__dirname + '/../static/reportTemplate.html', 'utf8');
-    const REPORT_CSS = fs.readFileSync(__dirname + '/../static/reportStyles.css', 'utf8');
     const sanitizedJson = JSON.stringify(lhr)
       .replace(/</g, '\\u003c') // replaces opening script tags
       .replace(/\u2028/g, '\\u2028') // replaces line separators ()
@@ -95,7 +94,7 @@ function generateHtmlReport(lhr) {
     return replaceStrings(REPORT_TEMPLATE, [
       {search: '%%LIGHTHOUSE_JSON%%', replacement: sanitizedJson},
       {search: '%%LIGHTHOUSE_JAVASCRIPT%%', replacement: sanitizedJavascript},
-      {search: '/*%%LIGHTHOUSE_CSS%%*/', replacement: REPORT_CSS},
+      {search: '/*%%LIGHTHOUSE_CSS%%*/', replacement: htmlReportAssets.REPORT_CSS},
       {search: '%%LIGHTHOUSE_TEMPLATES%%', replacement: htmlReportAssets.REPORT_TEMPLATES},
     ]);
 }
