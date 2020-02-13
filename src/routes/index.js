@@ -18,22 +18,20 @@ router.get('/lighthouse', async function(req, res) {
         case 'help':
             res.send({
                 text: '**Lighthouse Audit Bot - Slash Command Help**\n\n'
-                + '* `/lighthouse {url}` - Run a quick audit with default settings on a website\n'
                 + '* `/lighthouse` - Launch dialog to run ad-hoc audits with full control over options\n'
-                + '* `/lighthouse schedule` - Launch dialog to create an audit job with full control over options\n'
-                + '* `/lighthouse schedule list` - Show full list of schedules created\n'
-                + '* `/lighthouse schedule remove {id}` - Removes a scheduled audit job (You may input several IDs in the same command)'
+                + '* `/lighthouse {url}` - Run a quick audit with default settings on a website\n'
+                + '* `/lighthouse jobs` - Launch dialog to create an audit job with full control over options\n'
+                + '* `/lighthouse jobs ls` - Show full list of schedules created\n'
+                + '* `/lighthouse jobs rm {id}` - Removes a scheduled audit job (You may input several IDs in the same command)'
             });
             return;
         case 'stats':
             // TODO: investigate ways to implement charting of a given url for past 5 audits
             break;
         case 'jobs':
-        case 'schedule':
             switch (req_options[1]) {
-                case 'list':
                 case 'ls':
-                    // generate schedule list and return to user (ephemeral if possible)
+                    // generate schedule list and return to user
                     const list = await store.schedule.getScheduleList();
                     let text = 'No scheduled jobs found';
                     if (list.length > 0) {
@@ -44,7 +42,6 @@ router.get('/lighthouse', async function(req, res) {
                     }
                     res.send({text});
                     break;
-                case 'remove':
                 case 'rm':
                     if (!req_options[2]) {
                         res.send({
@@ -63,7 +60,7 @@ router.get('/lighthouse', async function(req, res) {
                         } catch(error) {
                             utils.common.logger.error(error);
                             res.send({
-                                text: `Failed to remove scheduled job with ID ${req_options[id_idx]}.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`
+                                text: `Failed to remove scheduled job with ID \`${req_options[id_idx]}\`.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`
                             });
                         }
                         id_idx++;
@@ -75,8 +72,21 @@ router.get('/lighthouse', async function(req, res) {
                     break;
 
                 case 'info':
-                    // TODO: Create attachment post with full information of scheduled job
-                    // _id, selected categories, auth script, selector, user ...
+                    if (!req_options[2]) {
+                        res.send({
+                            text: 'Please input the ID of the schedule you\'d like to view details of as `/lighthouse info {id}`'
+                        });
+                        return;
+                    }
+
+                    try {
+                        const schedule = await store.schedule.getSchedule(req_options[2]);
+                        const response = utils.response.generateScheduleInfo(schedule);
+                        res.send(response);
+                    } catch(error) {
+                        utils.common.logger.error(error);
+                        res.send({text: `Failed to fetch information for job with ID \`${req_options[2]}\`.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`});
+                    }
                     break;
                 default:
                     // if none found, launch create schedule dialog
@@ -125,7 +135,7 @@ router.post('/create_schedule', async function(req, res) {
     const channel = await api.getChannel(channel_id);
     const team = await api.getTeam(team_id);
     try {
-        const new_schedule = await store.schedule.createSchedule({
+        const schedule = await store.schedule.createSchedule({
             user_id,
             channel_id,
             username,
@@ -134,22 +144,22 @@ router.post('/create_schedule', async function(req, res) {
             ...submission,
         });
     
-        utils.schedule.scheduleJob(new_schedule, async function() {
+        utils.schedule.scheduleJob(schedule, async function() {
             const options = {
-                throttling: new_schedule.throttling,
-                performance: new_schedule.performance,
-                accessibility: new_schedule.accessibility,
-                'best-practices': new_schedule['best-practices'],
-                pwa: new_schedule.pwa,
-                seo: new_schedule.seo,
-                auth_script: new_schedule.auth_script,
-                wait_selector: new_schedule.wait_selector,
+                throttling: schedule.throttling,
+                performance: schedule.performance,
+                accessibility: schedule.accessibility,
+                'best-practices': schedule['best-practices'],
+                pwa: schedule.pwa,
+                seo: schedule.seo,
+                auth_script: schedule.auth_script,
+                wait_selector: schedule.wait_selector,
             };
-            await runAudit(new_schedule.audit_url, new_schedule.user_id, new_schedule.channel_id, options);
+            await runAudit(schedule.audit_url, schedule.user_id, schedule.channel_id, options);
         });
 
         let text = 'Successfully scheduled a new job!\n\n| id | Creator | Channel | Team | URL | Schedule |\n| :--: | :--: | :--: | :--: | :--: | :--: | \n';
-        text += `| ${new_schedule._id} | @${new_schedule.username} | ${new_schedule.channel_display_name} | ${new_schedule.team_display_name} | ${new_schedule.audit_url} | ${new_schedule.schedule} |\n`;
+        text += `| ${schedule._id} | @${schedule.username} | ${schedule.channel_display_name} | ${schedule.team_display_name} | ${schedule.audit_url} | ${schedule.schedule} |\n`;
         await api.sendEphemeralPostToUser(user_id, channel_id, text);
     } catch(error) {
         utils.common.logger.error(error);

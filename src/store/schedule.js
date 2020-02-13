@@ -50,6 +50,11 @@ async function createSchedule(payload) {
     return data;
 }
 
+async function getSchedule(id) {
+    const data = await ScheduleModel.findById(id);
+    return data;
+}
+
 async function getScheduleList() {
     const list = await ScheduleModel.find();
     return list;
@@ -62,6 +67,7 @@ async function deleteScheduleWithId(id) {
 
 module.exports = {
     createSchedule,
+    getSchedule,
     getScheduleList,
     deleteScheduleWithId,
 };

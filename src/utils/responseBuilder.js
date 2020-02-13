@@ -148,7 +148,106 @@ function generateAuditField(audit) {
     };
 }
 
+function generateBulletCheckbox(key, value) {
+    let text = '';
+    if (value === 'True') {
+        text += '- [x] ';
+    } else {
+        text += '- [ ] ';
+    }
+    text += key;
+    return text;
+}
+
+function generateScheduleInfo(schedule) {
+    let fields = [];
+
+    fields.push({
+        short: false,
+        title: '',
+        value: '---',
+    });
+
+    fields.push({
+        short: false,
+        title: 'Configurations:',
+        value: '',
+    });
+
+    const throttling = generateBulletCheckbox('Throttling', schedule.throttling);
+    fields.push({
+        short: true,
+        title: '',
+        value: throttling
+    });
+
+    const performance = generateBulletCheckbox('Performance', schedule.performance);
+    fields.push({
+        short: true,
+        title: '',
+        value: performance
+    });
+
+    const accessibility = generateBulletCheckbox('Accessibility', schedule.accessibility);
+    fields.push({
+        short: true,
+        title: '',
+        value: accessibility
+    });
+
+    const best_practices = generateBulletCheckbox('Best Practices', schedule['best-practices']);
+    fields.push({
+        short: true,
+        title: '',
+        value: best_practices
+    });
+
+    const pwa = generateBulletCheckbox('PWA', schedule.pwa);
+    fields.push({
+        short: true,
+        title: '',
+        value: pwa
+    });
+
+    const seo = generateBulletCheckbox('SEO', schedule.seo);
+    fields.push({
+        short: true,
+        title: '',
+        value: seo
+    });
+    
+    if (schedule.auth_script) {
+        fields.push({
+            short: false,
+            title: '',
+            value: '---',
+        });
+
+        fields.push({
+            short: false,
+            title: 'Authentication Script',
+            value: `\`\`\`javascript\n${schedule.auth_script}\n\`\`\``
+        });
+
+        fields.push({
+            short: false,
+            title: 'Await Selector',
+            value: `\`${schedule.wait_selector}\``
+        });
+    }
+
+    return {
+        attachments: [
+            {
+                title: schedule.audit_url,
+                text: `**Job Schedule:** \`${schedule.schedule}\``,
+                fields
+            }
+        ]
+    };
+}
 module.exports = {
     generateAuditDialog,
     generateReportAttachment,
+    generateScheduleInfo,
 };
