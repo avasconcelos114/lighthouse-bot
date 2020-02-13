@@ -66,7 +66,7 @@ async function launchPuppeteer(url, options) {
         parentPort.postMessage(lhr);
         return;
     } catch(error) {
-        logger.error(error.toString());
+        logger.error(error);
     }
 }
 

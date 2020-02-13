@@ -56,6 +56,7 @@ router.get('/lighthouse', async function(req, res) {
                         try {
                             await store.schedule.deleteScheduleWithId(req_options[id_idx]);
                             utils.schedule.removeJob(req_options[id_idx]);
+                            utils.common.logger.info(`removed scheduled job with id=${req_options[id_idx]}`);
                             deleted_ids.push(req_options[id_idx]);
                         } catch(error) {
                             utils.common.logger.error(error);
@@ -65,7 +66,7 @@ router.get('/lighthouse', async function(req, res) {
                         }
                         id_idx++;
                     }
-        
+                    
                     res.send({
                         text: 'Successfully deleted scheduled job(s)! \n* ' + deleted_ids.join('\n* ')
                     });
@@ -82,6 +83,7 @@ router.get('/lighthouse', async function(req, res) {
                     try {
                         const schedule = await store.schedule.getSchedule(req_options[2]);
                         const response = utils.response.generateScheduleInfo(schedule);
+                        utils.common.logger.info(`retrieved information on schedule with id="${schedule._id}" for user_id=${req_data.user_id}`);
                         res.send(response);
                     } catch(error) {
                         utils.common.logger.error(error);
@@ -90,6 +92,7 @@ router.get('/lighthouse', async function(req, res) {
                     break;
                 default:
                     // if none found, launch create schedule dialog
+                    utils.common.logger.info(`launching job scheduling dialog for user_id=${req_data.user_id}`);
                     const dialog = utils.response.generateAuditDialog(true);
                     const payload = {
                         trigger_id: req_data.trigger_id,
@@ -113,6 +116,7 @@ router.get('/lighthouse', async function(req, res) {
                 await runAudit(req_options[0], req_data.user_id, req_data.channel_id, opts);
             } else {
                 // Audit dialog w/ options
+                utils.common.logger.info(`launching audit dialog for user_id=${req_data.user_id}`);
                 const dialog = utils.response.generateAuditDialog();
                 const payload = {
                     trigger_id: req_data.trigger_id,
@@ -178,6 +182,7 @@ router.post('/run_audit', async function(req, res) {
 
     const validation_error = validateOptions(body.submission);
     if (validation_error) {
+        utils.common.logger.error(validation_error);
         res.send({error: validation_error});
         return;
     } else {
@@ -196,10 +201,10 @@ router.post('/init_audit', async function(req, res) {
 });
 
 async function runAudit(url, user_id, channel_id, options) {
-    let today = new Date();
-    let time = today.toLocaleTimeString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: 'numeric', minute: 'numeric'});
+    let time = utils.common.generateCurrentTime();
 
     try {
+        utils.common.logger.debug(`Running audit report for url=${url}`);
         await api.sendEphemeralPostToUser(user_id, channel_id, `Running audit report for [${url}](${url})!\nPlease wait for the audit to be completed`);
         const lhs = await utils.lighthouse.runLighthouseAudit(url, options);
         const report = utils.response.generateReportAttachment(lhs, url);
@@ -215,6 +220,7 @@ async function runAudit(url, user_id, channel_id, options) {
         };
         await api.sendPostToChannel(payload);
     } catch(error) {
+        utils.common.logger.error('Failed to run audit');
         utils.common.logger.error(error);
         await api.sendEphemeralPostToUser(user_id, channel_id, `Failed to run audit, please try again or contact an administrator.`);
     }

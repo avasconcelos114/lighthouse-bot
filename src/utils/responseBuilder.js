@@ -1,7 +1,6 @@
-const {logger, getScoreElement} = require('./common');
+const {getScoreElement} = require('./common');
 
 function generateAuditDialog(is_schedule) {
-    logger.debug('Attempting to build an audit dialog');
     let title = 'Run Lighthouse Audit';
     let callback_id = 'auditcreate';
     let elements = [];
@@ -246,6 +245,7 @@ function generateScheduleInfo(schedule) {
         ]
     };
 }
+
 module.exports = {
     generateAuditDialog,
     generateReportAttachment,

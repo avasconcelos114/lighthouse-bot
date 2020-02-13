@@ -16,9 +16,11 @@ app.use(express.static(static_path));
 app.use('/', routes);
     
 app.listen(PORT, async function() {
+    utils.common.logger.info(`bot listening on port ${PORT}!`);
     // On server startup, load all stored schedules and queue them to be run
     const list = await store.schedule.getScheduleList();
     for (let schedule of list) {
+        utils.common.logger.debug(`scheduling job with id=${schedule._id}`);
         utils.schedule.scheduleJob(schedule, async function() {
             const options = {
                 throttling: schedule.throttling,
@@ -42,5 +44,4 @@ app.listen(PORT, async function() {
             });
         });
     }
-    utils.common.logger.debug(`bot listening on port ${PORT}!`);
 });

@@ -1,13 +1,18 @@
 const logger = {
     debug: function(message) {
-        const timestamp = new Date().toString();
-        console.log('\x1b[36m%s\x1b[0m', `${timestamp} - ${message}`);
+        const timestamp = generateCurrentTime();
+        console.log('\x1b[36m%s\x1b[0m', `[DEBUG]: ${timestamp} - ${message}`);
     },
     
     error: function(message) {
-        const timestamp = new Date().toString();
-        console.error('\x1b[31m%s\x1b[0m', `${timestamp} - ${message}`);
-    }
+        const timestamp = generateCurrentTime();
+        console.error('\x1b[31m%s\x1b[0m', `[ERROR]: ${timestamp} - ${message}`);
+    },
+
+    info: function(message) {
+        const timestamp = generateCurrentTime();
+        console.log('\x1b[32m%s\x1b[0m', `[INFO]: ${timestamp} - ${message}`);
+    },
 };
 
 function checkEnvVar(variable) {
@@ -17,6 +22,10 @@ function checkEnvVar(variable) {
 
     logger.error(`Error: the environment variable ${variable} has not been set!`);
     process.exit(1);
+}
+
+function generateCurrentTime() {
+    return new Date().toLocaleTimeString([], {year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h24'});
 }
 
 function generateTimestamp() {
@@ -40,5 +49,6 @@ module.exports = {
     logger,
     checkEnvVar,
     generateTimestamp,
+    generateCurrentTime,
     getScoreElement,
 };

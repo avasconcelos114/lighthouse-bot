@@ -58,9 +58,9 @@ Example script (works on Mattermost instances):
 Current Tasks:
 - [ ] Implementing trend charts for audit results
 - [x] Add usernames to schedule schemas so that they can be easily viewed through `/lighthouse schedule list`
-- [ ] Implementing `/lighthouse schedule info {id}` to get full details of a given job
+- [x] Implementing `/lighthouse schedule info {id}` to get full details of a given job
 - [ ] Add unit testing with Jest or AVA
 - [ ] Write documentation to make command usage clearer
-- [ ] Add more comprehensive logging
+- [x] Add more comprehensive logging
 - [x] Investigate the possibility of using workers to run audits so that multiple audits can run simultaneously
 - [ ] Investigate possibility of accounting for the timezone of user who registers a job (instead of always following server time)
