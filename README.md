@@ -13,7 +13,7 @@ This project seeks to provide added value to the Mattermost ecosystem by adding 
 
 ## Development
 ### Pre-requisites
-0. [Create a Bot Account](https://docs.mattermost.com/developer/bot-accounts.html#user-interface-ui), or [issue a Personal Access Token](https://docs.mattermost.com/developer/personal-access-tokens.html#creating-a-personal-access-token) in a Mattermost server of your choice
+**0. [Create a Bot Account](https://docs.mattermost.com/developer/bot-accounts.html#user-interface-ui), or [issue a Personal Access Token](https://docs.mattermost.com/developer/personal-access-tokens.html#creating-a-personal-access-token) in a Mattermost server of your choice**
 
 NOTE: Since this bot relies on sending ephemeral messages through Mattermost's API, the account you're using __MUST__ have `System Admin` permissions
 
@@ -89,7 +89,7 @@ pm2 start ecosystem.config.js
 ## Tutorials  
 While typing `/lighthouse help` provides you with a list of available commands for the Lighthouse chatbot, below are a few step-by-step tutorials that may help you with the most important aspects of using this chatbot.  
 
-* [Performing ad-hoc tests](documentation/recipes/ead-hoc.md)
+* [Performing ad-hoc tests](documentation/recipes/ad-hoc.md)
 * [Scheduling audit jobs](documentation/recipes/scheduling.md)
 * [Authentication Scripting](documentation/recipes/auth-scripting.md)
 
