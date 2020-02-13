@@ -83,24 +83,15 @@ npm install
 pm2 start ecosystem.config.js
 ```
 
+## Deployment
+
+
 ## Tutorials  
-* [Performing ad-hoc tests](documentation/ad-hoc.md)
-* [Scheduling audit jobs](documentation/scheduling.md)
-* [Authentication Scripting](documentation/auth-scripting.md)
+While typing `/lighthouse help` provides you with a list of available commands for the Lighthouse chatbot, below are a few step-by-step tutorials that may help you with the most important aspects of using this chatbot.  
 
-## Dealing with authentication screens
-Sometimes the page you need to test is behind an authentication screen. 
-
-In times like that you will need to inject JS into the authentication script section as an IIFE.
-
-Example script (works on Mattermost instances):
-```
-(() => {
-  document.querySelector('#loginId').value = 'username';
-  document.querySelector('#loginPassword').value = 'password';
-  document.querySelector('#loginButton').click();
-})();
-```
+* [Performing ad-hoc tests](documentation/recipes/ead-hoc.md)
+* [Scheduling audit jobs](documentation/recipes/scheduling.md)
+* [Authentication Scripting](documentation/recipes/auth-scripting.md)
 
 ## Hackfest Proposal
 This project has been created as a submission to the Mattermost Bot Hackfest.
@@ -112,7 +103,7 @@ You can [read the full Hackfest Proposal here](/documentation/README.md)
 - [x] Add usernames to schedule schemas so that they can be easily viewed through `/lighthouse schedule list`
 - [x] Implementing `/lighthouse schedule info {id}` to get full details of a given job
 - [ ] Add unit testing with Jest or AVA
-- [ ] Write documentation to make command usage clearer
+- [x] Write documentation to make command usage clearer
 - [x] Add more comprehensive logging
 - [x] Investigate the possibility of using workers to run audits so that multiple audits can run simultaneously
 - [ ] Investigate possibility of accounting for the timezone of user who registers a job (instead of always following server time)

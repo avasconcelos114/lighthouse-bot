@@ -238,7 +238,7 @@ function validateOptions(options) {
     }
 
     if (options.auth_script && !options.await_selector) {
-        return 'Please input a wait selector when using an Authentication Script';
+        return 'Please input an await selector when using an Authentication Script';
     }
     return null;
 }
