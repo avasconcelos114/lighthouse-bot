@@ -17,7 +17,7 @@ This project seeks to provide added value to the Mattermost ecosystem by adding 
 
 NOTE: Since this bot relies on sending ephemeral messages through Mattermost's API, the account you're using __MUST__ have `System Admin` permissions
 
-1. Used environment variables
+**1. Used environment variables**  
 Regardless of the method you are deploying, this application relies on a variety of environment variables to be able to function. Either use the `export` method, or inject your container with env variables depending on what method you are deploying this chatbot with.
 
 | Variable name | Example value | Explanations / Notes |
@@ -32,17 +32,17 @@ Regardless of the method you are deploying, this application relies on a variety
 | TZ (optional) | Asia/Seoul | The timezone value that will be used on server (important for job scheduling) |
 
 ### With Docker
-0. Build Lighthouse bot image  
+**0. Build Lighthouse bot image**   
 ```
 docker build -t lighthouse-bot .
 ```
 
-1. Run mongodb (as a separate container)  
+**1. Run mongodb (as a separate container)**  
 ```
 docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME="root" -e MONGO_INITDB_ROOT_PASSWORD="test_passwd" --name lighthouse-mongo mongo:latest
 ```
 
-2. Run Lighthouse bot container   
+**2. Run Lighthouse bot container**  
 Note: Ensure you have the environment variables set when running the container  
   
 Example `run` command:
@@ -50,12 +50,12 @@ Example `run` command:
 docker run -d -p 3001:3001 -v $PWD/src:/home/app/src -e TZ="Asia/Seoul" -e PORT=3001 -e MATTERMOST_SERVER="http://192.168.1.129:8065" -e TOKEN="sd67j1cxepnc7meo3prf3krzgr" -e MONGO_USERNAME="root" -e MONGO_PASSWORD="test_passwd" -e MONGO_SERVER="192.168.1.129:27017" -e CHATBOT_SERVER="http://192.168.1.129:3001" --name lighthouse-bot lighthouse-bot
 ```
 
-3. [Register a slash command](https://docs.mattermost.com/developer/slash-commands.html#custom-slash-command) in Mattermost that sends a `GET` request to the `/lighthouse` endpoint
+**3. [Register a slash command](https://docs.mattermost.com/developer/slash-commands.html#custom-slash-command) in Mattermost that sends a `GET` request to the `/lighthouse` endpoint**  
 
 ### Without Docker (using PM2)
-0. Follow the [installation guide for MongoDB](https://docs.mongodb.com/manual/installation/) to set up your MongoDB instance  
+**0. Follow the [installation guide for MongoDB](https://docs.mongodb.com/manual/installation/) to set up your MongoDB instance** 
   
-1. Set values for all required environment variables  
+**1. Set values for all required environment variables**  
 ```
 export PORT=3001
 export MATTERMOST_SERVER=http://192.168.1.10:8065
@@ -67,25 +67,26 @@ export CHATBOT_SERVER=http://192.168.1.10:3001
 export TZ=Asia/Seoul
 ```
 
-2. Globally install [PM2](https://pm2.keymetrics.io)  
+**2. Globally install [PM2](https://pm2.keymetrics.io)**  
 
 ```
 npm install -g pm2
 ```
 
-3. Install dependencies  
+**3. Install dependencies**  
 ```
 npm install
 ```
 
-4. Run chatbot with pm2  
+**4. Run chatbot with pm2**  
 ```
 pm2 start ecosystem.config.js
 ```
 
-## Tutorials
+## Tutorials  
 * [Performing ad-hoc tests](documentation/ad-hoc.md)
 * [Scheduling audit jobs](documentation/scheduling.md)
+* [Authentication Scripting](documentation/auth-scripting.md)
 
 ## Dealing with authentication screens
 Sometimes the page you need to test is behind an authentication screen. 
