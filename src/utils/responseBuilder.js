@@ -57,15 +57,15 @@ function generateAuditDialog(is_schedule) {
     };
     elements.push(auth_script);
 
-    const wait_selector = {
-        display_name: 'Wait Selector',
-        name: 'wait_selector',
+    const await_selector = {
+        display_name: 'Await Selector',
+        name: 'await_selector',
         type: 'text',
         help_text: 'Please input a selector for an element in the authentication page (required when using an Authentication Script)',
         placeholder: '#loginId',
         optional: true,
     };
-    elements.push(wait_selector);
+    elements.push(await_selector);
 
     return {
         callback_id,
@@ -231,7 +231,7 @@ function generateScheduleInfo(schedule) {
         fields.push({
             short: false,
             title: 'Await Selector',
-            value: `\`${schedule.wait_selector}\``
+            value: `\`${schedule.await_selector}\``
         });
     }
 

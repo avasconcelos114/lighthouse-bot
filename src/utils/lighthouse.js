@@ -34,7 +34,7 @@ async function launchPuppeteer(url, options) {
             await page.goto(url, {
                 waitUntil: 'networkidle0',
             });
-            await page.waitForSelector(options.wait_selector, {visible: true});
+            await page.waitForSelector(options.await_selector, {visible: true});
             await page.evaluate(options.auth_script);
             await page.waitForNavigation();
         }

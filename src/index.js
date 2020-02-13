@@ -30,7 +30,7 @@ app.listen(PORT, async function() {
                 pwa: schedule.pwa,
                 seo: schedule.seo,
                 auth_script: schedule.auth_script,
-                wait_selector: schedule.wait_selector,
+                await_selector: schedule.await_selector,
             };
 
             app.runMiddleware('/init_audit', {

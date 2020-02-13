@@ -1,12 +1,12 @@
 const logger = {
     debug: function(message) {
         const timestamp = generateCurrentTime();
-        console.log('\x1b[36m%s\x1b[0m', `[DEBUG]: ${timestamp} - ${message}`);
+        console.log('\x1b[36m%s\x1b[0m', `[DEBU]: ${timestamp} - ${message}`);
     },
     
     error: function(message) {
         const timestamp = generateCurrentTime();
-        console.error('\x1b[31m%s\x1b[0m', `[ERROR]: ${timestamp} - ${message}`);
+        console.error('\x1b[31m%s\x1b[0m', `[ERRO]: ${timestamp} - ${message}`);
     },
 
     info: function(message) {

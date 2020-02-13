@@ -157,7 +157,7 @@ router.post('/create_schedule', async function(req, res) {
                 pwa: schedule.pwa,
                 seo: schedule.seo,
                 auth_script: schedule.auth_script,
-                wait_selector: schedule.wait_selector,
+                await_selector: schedule.await_selector,
             };
             await runAudit(schedule.audit_url, schedule.user_id, schedule.channel_id, options);
         });
@@ -237,7 +237,7 @@ function validateOptions(options) {
         return 'Please make sure you have at least one category enabled';
     }
 
-    if (options.auth_script && !options.wait_selector) {
+    if (options.auth_script && !options.await_selector) {
         return 'Please input a wait selector when using an Authentication Script';
     }
     return null;
