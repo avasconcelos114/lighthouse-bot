@@ -1,5 +1,9 @@
 # Authentication Scripting
 
+## Pre-requisites
+* A Mattermost server v5.16+
+* Completing the [initial setup for the Lighthouse chatbot](/README.md#deployment)
+
 ## Explanation
 Sometimes the page you need to test is behind an authentication screen. 
 

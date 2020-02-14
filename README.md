@@ -16,16 +16,21 @@ This project seeks to provide added value to the Mattermost ecosystem by adding 
 * __Trend Charts__ - Track changes in each of the audit categories over time for a given URL by running the `/lighthouse stats {url}` command and clicking the link to an intuitive dashboard (also provided as an HTML template that can be customized in `src/static/statsTemplate.html`)
 
 ## Development
-### Pre-requisites
-**0. [Create a Bot Account](https://docs.mattermost.com/developer/bot-accounts.html#user-interface-ui), or [issue a Personal Access Token](https://docs.mattermost.com/developer/personal-access-tokens.html#creating-a-personal-access-token) in a Mattermost server of your choice**
+### Pre-requisites & Notes
+
+* **Node.js v10+**
+
+* **Mattermost v5.16+**
+
+* **[Create a Bot Account](https://docs.mattermost.com/developer/bot-accounts.html#user-interface-ui), or [issue a Personal Access Token](https://docs.mattermost.com/developer/personal-access-tokens.html#creating-a-personal-access-token) in a Mattermost server of your choice**
 
 NOTE: Since this bot relies on sending ephemeral messages through Mattermost's API, the account you're using __MUST__ have `System Admin` permissions
 
-**1. Used environment variables**  
-Regardless of the method you are deploying, this application relies on a variety of environment variables to be able to function. Either use the `export` method, or inject your container with env variables depending on what method you are deploying this chatbot with.
+* **Used environment variables**  
+Regardless of the method you are deploying with, this application relies on a variety of environment variables to be able to function properly. Either use the `export` method, or inject your docker container with env variables depending on what method you are deploying this chatbot with.
 
 | Variable name | Example value | Explanations / Notes |
-| :--: | :--: | :-- |
+| --: | :-- | :-- |
 | PORT | 3001 | The port being used by this chatbot |
 | MATTERMOST_SERVER | http://192.168.1.10:8065 | The Mattermost instance you are using |
 | TOKEN | sd67j1cxepnc7meo3pof3krzgr | A Personal Access Token or Bot Account Token |
@@ -35,7 +40,7 @@ Regardless of the method you are deploying, this application relies on a variety
 | CHATBOT_SERVER | http://192.168.1.10:3001 | IP to be used by this chatbot (needed to set URL endpoints in Message Attachments) |
 | TZ (optional) | Asia/Seoul | The timezone value that will be used on server (important for job scheduling) |
 
-### With Docker
+### Developing with Docker
 **0. Build Lighthouse bot image**   
 ```
 docker build -t lighthouse-bot .
@@ -56,7 +61,7 @@ docker run -d -p 3001:3001 -v $PWD/src:/home/app/src -e TZ="Asia/Seoul" -e PORT=
 
 **3. [Register a slash command](https://docs.mattermost.com/developer/slash-commands.html#custom-slash-command) in Mattermost that sends a `GET` request to the `/lighthouse` endpoint**  
 
-### Without Docker (using PM2)
+### Developing with PM2
 **0. Follow the [installation guide for MongoDB](https://docs.mongodb.com/manual/installation/) to set up your MongoDB instance** 
   
 **1. Set values for all required environment variables**  

@@ -1,5 +1,9 @@
 # Scheduling Audit Jobs
 
+## Pre-requisites
+* A Mattermost server v5.16+
+* Completing the [initial setup for the Lighthouse chatbot](/README.md#deployment)
+
 ## Explanation
 Scheduling jobs lies at the core of being able to consistently and effortlessly audit your sites.
 
