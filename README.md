@@ -101,6 +101,7 @@ While typing `/lighthouse help` provides you with a list of available commands f
 * [Performing ad-hoc tests](documentation/recipes/ad-hoc.md)
 * [Scheduling audit jobs](documentation/recipes/scheduling.md)
 * [Authentication Scripting](documentation/recipes/auth-scripting.md)
+* [Viewing Audit Trends](documentation/recipes/audit-stats.md)
 
 ## Hackfest Proposal
 This project has been created as a submission to the Mattermost Bot Hackfest.
