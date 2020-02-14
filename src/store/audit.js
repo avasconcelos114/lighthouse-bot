@@ -3,17 +3,19 @@ const utils = require('../utils');
 
 const schema = new mongoose.Schema({
     created_date: Number, // unix timestamp
+    audit_url: String,
     user_id: String, // id of person who ran an audit
     report: String, // json formatted string of report object
 });
 
 const AuditModel = mongoose.model('Audit', schema);
 
-async function createAudit(userId, report) {
+async function createAudit(user_id, report, audit_url) {
     const new_audit = new AuditModel({
         created_date: utils.common.generateTimestamp(),
-        user_id: userId,
-        report: report,
+        audit_url,
+        user_id,
+        report,
     });
 
     const data = await new_audit.save();
@@ -26,7 +28,13 @@ async function getAuditReport(id) {
     return report;
 }
 
+async function getAuditReportsByUrl(url) {
+    const audits = await AuditModel.find({audit_url: url});
+    return audits;
+}
+
 module.exports = {
     createAudit,
     getAuditReport,
+    getAuditReportsByUrl
 };

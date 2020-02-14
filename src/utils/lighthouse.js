@@ -99,7 +99,17 @@ function generateHtmlReport(lhr) {
     ]);
 }
 
+function generateHtmlStats(data) {
+    const STATS_TEMPLATE = fs.readFileSync(__dirname + '/../static/statsTemplate.html', 'utf8');
+    const sanitizedJson = JSON.stringify(data);
+
+    return replaceStrings(STATS_TEMPLATE, [
+        {search: '%%LIGHTHOUSE_JSON%%', replacement: sanitizedJson},
+    ]);
+}
+
 module.exports = {
     runLighthouseAudit,
     generateHtmlReport,
+    generateHtmlStats,
 };

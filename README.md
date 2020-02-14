@@ -10,6 +10,7 @@ This project seeks to provide added value to the Mattermost ecosystem by adding 
 * __Job Scheduling__ - With the `/lighthouse jobs` command, you can schedule an auditing job to be run whenever necessary
 * __Authentication Scripting__ - When auditing a website that requires an authenticated user, run your audit with an authentication script that will be injected into puppeteer at run-time (more information in [the auth section below](#dealing-with-authentication-screens))
 * __Customizeable HTML Reports__ - Always be able to view the full detailed report from Lighthouse as an HTML file, which is provided by a template in this project, and customize parts of the template (in `src/static/reportTemplate.html`) to your heart's content!
+* __Trend Charts__ - Track changes in each of the audit categories over time for a given URL by running the `/lighthouse stats {url}` command and clicking the link to an intuitive dashboard
 
 ## Development
 ### Pre-requisites
@@ -99,7 +100,8 @@ This project has been created as a submission to the Mattermost Bot Hackfest.
 You can [read the full Hackfest Proposal here](/documentation/README.md)
 
 ### Current Tasks
-- [ ] Implementing trend charts for audit results to be accessed with `/lighthouse stats {url}`
+- [x] Implementing trend charts for audit results to be accessed with `/lighthouse stats {url}`
+- [ ] Styling audit trends dashboard 
 - [x] Add usernames to schedule schemas so that they can be easily viewed through `/lighthouse schedule list`
 - [x] Implementing `/lighthouse schedule info {id}` to get full details of a given job
 - [ ] Add unit testing with Jest or AVA

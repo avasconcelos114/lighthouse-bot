@@ -26,7 +26,26 @@ router.get('/lighthouse', async function(req, res) {
             });
             return;
         case 'stats':
-            // TODO: investigate ways to implement charting of a given url for past 5 audits
+            const url = req_options[1];
+            if (!url) {
+                res.send({
+                    text: 'Please input the URL that you\'d like to view stats of with `/lighthouse stats {url}`'
+                });
+                return;
+            }
+
+            // check if more than 2 audits have run in the past
+            const audits = await store.audit.getAuditReportsByUrl(url);
+            if (audits.length < 2) {
+                res.send({
+                    text: `Please ensure you have run at least 2 audit runs on the URL ${url}`
+                });
+                return;
+            }
+
+            res.send({
+                text: `[Click here](${CHATBOT_SERVER}/view_stats?url=${url}) to view all auditing statistics for ${url}`
+            });
             break;
         case 'jobs':
             switch (req_options[1]) {
@@ -73,7 +92,8 @@ router.get('/lighthouse', async function(req, res) {
                     break;
 
                 case 'info':
-                    if (!req_options[2]) {
+                    const id = req_options[2];
+                    if (!id) {
                         res.send({
                             text: 'Please input the ID of the schedule you\'d like to view details of as `/lighthouse info {id}`'
                         });
@@ -81,13 +101,13 @@ router.get('/lighthouse', async function(req, res) {
                     }
 
                     try {
-                        const schedule = await store.schedule.getSchedule(req_options[2]);
+                        const schedule = await store.schedule.getSchedule(id);
                         const response = utils.response.generateScheduleInfo(schedule);
                         utils.common.logger.info(`retrieved information on schedule with id="${schedule._id}" for user_id=${req_data.user_id}`);
                         res.send(response);
                     } catch(error) {
                         utils.common.logger.error(error);
-                        res.send({text: `Failed to fetch information for job with ID \`${req_options[2]}\`.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`});
+                        res.send({text: `Failed to fetch information for job with ID \`${id}\`.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`});
                     }
                     break;
                 default:
@@ -208,7 +228,7 @@ async function runAudit(url, user_id, channel_id, options) {
         await api.sendEphemeralPostToUser(user_id, channel_id, `Running audit report for [${url}](${url})!\nPlease wait for the audit to be completed`);
         const lhs = await utils.lighthouse.runLighthouseAudit(url, options);
         const report = utils.response.generateReportAttachment(lhs, url);
-        const audit = await store.audit.createAudit(user_id, JSON.stringify(lhs));
+        const audit = await store.audit.createAudit(user_id, JSON.stringify(lhs), url);
         const payload = {
             channel_id: channel_id,
             message: `#lighthouse_audit\nPerformance auditing completed at \`${time}\`\n\nView full report [here](${CHATBOT_SERVER}/view_report/${audit._id})`,
@@ -252,6 +272,54 @@ router.get('/view_report/:id', async function(req, res) {
     try {
         const report = await store.audit.getAuditReport(id);
         const html = utils.lighthouse.generateHtmlReport(report);
+        res.send(html);
+    } catch(error) {
+        utils.common.logger.error(error);
+        const html = fs.readFileSync(__dirname + '/../static/404.html', 'utf8');
+        res.send(html);
+    }
+});
+
+router.get('/view_stats', async function(req, res) {
+    const {url} = req.query;
+    res.setHeader('Content-Type', 'text/html');
+    try {
+        if (!url) {
+            throw new Error('No URL parameter found when trying to render stats');
+        }
+
+        const data = {
+            url,
+            performance: [],
+            accessibility: [],
+            'best-practices': [],
+            pwa: [],
+            seo: [],
+        };
+        const audits = await store.audit.getAuditReportsByUrl(url);
+        for (let audit of audits) {
+            const report = JSON.parse(audit.report);
+            const date = new Date(audit.created_date * 1000).toLocaleTimeString([], {year: 'numeric', month: '2-digit', day: '2-digit'});
+            
+            // Add null checks
+            if (report.categories.performance) {
+                data.performance.push({time: date, value: report.categories.performance.score * 100});
+            }
+            if (report.categories.accessibility) {
+                data.accessibility.push({time: date, value: report.categories.accessibility.score * 100});
+            }
+            if (report.categories['best-practices']) {
+                data['best-practices'].push({time: date, value: report.categories['best-practices'].score * 100});
+            }
+            if (report.categories.pwa) {
+                data.pwa.push({time: date, value: report.categories.pwa.score * 100});
+            }
+            if (report.categories.seo) {
+                data.seo.push({time: date, value: report.categories.seo.score * 100});
+            }
+        }
+
+        const html = utils.lighthouse.generateHtmlStats(data);
         res.send(html);
     } catch(error) {
         utils.common.logger.error(error);

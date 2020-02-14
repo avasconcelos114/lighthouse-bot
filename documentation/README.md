@@ -1,7 +1,7 @@
 # Lighthouse Auditing Bot for Mattermost
 ![](img/lighthouse-logo.png)
 ## Table of Contents
-* [Hackfest Proposal](#hackathon-proposal)
+* [Hackfest Proposal](#hackfest-proposal)
   * [Summary](#summary)
   * [Problem Statement](#problem-statement)
   * [Feature List](#feature-list)
@@ -32,7 +32,7 @@ This project seeks to provide added value to the Mattermost ecosystem by adding 
   * A brief overview is displayed in-channel, with a link provided to a HTML template that displays the results of a given audit
 ![](img/audit_report_html.png)
 * Running the `/lighthouse stats https://siteurl.com` to view the changes in performance over time as a chart
-* Scheduling audit tasks for various sites that display the latest values, and the performance trend over time for a given site using `/lighthouse schedule` command and selecting options in a returned dialog
+* Scheduling audit tasks for various sites that display the latest values, and the performance trend over time for a given site using `/lighthouse jobs` command and selecting options in a returned dialog
 
 ### **Approach**
 The overall approach of this project is to create a private lighthouse testbed that is tightly integrated with Mattermost.
