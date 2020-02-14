@@ -29,7 +29,7 @@ async function getAuditReport(id) {
 }
 
 async function getAuditReportsByUrl(url) {
-    const audits = await AuditModel.find({audit_url: url});
+    const audits = await AuditModel.find({audit_url: url}).limit(5);
     return audits;
 }
 

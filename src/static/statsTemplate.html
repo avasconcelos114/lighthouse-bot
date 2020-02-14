@@ -7,33 +7,87 @@
   <style>
       @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
       body {
-        font-family: 'Roboto', sans-serif;
+        font-family: Roboto, Helvetica, Arial, sans-serif;
+        margin: 0;
+        background-color: #212121;
+        color: #fff;
+      }
+
+      main {
+          padding: 10px;
+      }
+
+      canvas {
+          margin-bottom: 20px;
+          max-height: 450px;
+          min-height: 150px;
+      }
+
+      #header {
+        background: #000;
+        color: #fff;
+        height: 32px;
+        display: flex;
+        flex: 1;
+        flex-direction: row;
+        align-items: center;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* TODO: use BEM */
+      #header > div {
+          display: flex;
       }
 
       #title {
-          margin: 0 20px;
+        width: -webkit-fill-available;
+    }
+    
+    span {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+        max-width: calc(100% - 70px);
+        font-weight: 100;
+        font-size: 16px;
       }
 
-      #title > h1 > a, a:hover {
-          color: '#2196F3' !important;
+      #audit-url {
+          color: #2196F3;
           text-decoration: none;
+      }
+
+      .logo {
+        height: 24px;
+        width: auto;
+        margin-left: 10px;
       }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 </head>
 <body>
     <noscript>Lighthouse report requires JavaScript. Please enable.</noscript>
-    <div id="title"></div>
+    <!-- header -->
+    <div id="header">
+        <img class="logo" height="50" width="auto" src="/img/lighthouse-logo.png"/>
+        <div id="title">
+            <span>Audit Trends for <a id="audit-url"></a></span>
+        </div>
+    </div>
     <main>
         <!-- charts generated here -->
     </main>
   <script>window.__LIGHTHOUSE_JSON__ = %%LIGHTHOUSE_JSON%%;</script>
   <script>
     function __initGraphs__() {
-        const container = document.querySelector('#title');
-        const title = document.createElement('h1');
-        title.innerHTML = `Audit Trends for <a href="${window.__LIGHTHOUSE_JSON__.url}">${window.__LIGHTHOUSE_JSON__.url}</a>`;
-        container.appendChild(title);
+        Chart.defaults.global.defaultFontColor = '#9E9E9E';
+        Chart.defaults.global.defaultFontFamily = 'Roboto, Helvetica, Arial, sans-serif';
+
+        const anchor = document.querySelector('#audit-url');
+        anchor.innerHTML = window.__LIGHTHOUSE_JSON__.url;
+        anchor.setAttribute('href', window.__LIGHTHOUSE_JSON__.url);
 
         generateChart('performance', 'Performance', window.__LIGHTHOUSE_JSON__.performance);
 
@@ -70,23 +124,23 @@
         switch(id) {
             case 'performance':
                 backgroundColor = 'rgba(156, 39, 176, 0.25)';
-                borderColor = 'rgba(156, 39, 176, 0.8)';
+                borderColor = 'rgba(156, 39, 176, 0.95)';
                 break;
             case 'accessibility':
                 backgroundColor = 'rgba(66, 165, 245, 0.25)';
-                borderColor = 'rgba(66, 165, 245, 0.8)';
+                borderColor = 'rgba(66, 165, 245, 0.95)';
                 break;
             case 'best-practices':
                 backgroundColor = 'rgba(255, 167, 38, 0.25)';
-                borderColor = 'rgba(255, 167, 38, 0.8)';
+                borderColor = 'rgba(255, 167, 38, 0.95)';
                 break;
             case 'pwa':
                 backgroundColor = 'rgba(102, 187, 106, 0.25)';
-                borderColor = 'rgba(102, 187, 106, 0.8)';
+                borderColor = 'rgba(102, 187, 106, 0.95)';
                 break;
             case 'seo':
                 backgroundColor = 'rgba(233, 30, 99, 0.25)';
-                borderColor = 'rgba(233, 30, 99, 0.8)';
+                borderColor = 'rgba(233, 30, 99, 0.95)';
                 break;
         }
         const options = {
@@ -105,6 +159,9 @@
                 title: {
                     display: true,
                     text: title,
+                    fontSize: 18,
+                    fontWeight: 100,
+                    fontColor: '#fff',
                 },
                 legend: {
                     display: false,

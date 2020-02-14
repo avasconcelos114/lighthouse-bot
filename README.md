@@ -5,13 +5,15 @@
 This project seeks to provide added value to the Mattermost ecosystem by adding performance auditing of websites with Google's [Lighthouse](https://developers.google.com/web/tools/lighthouse), offering a testing environment that is accessible directly from any Mattermost channel.
 
 ![](documentation/img/audit-result.png)
+
+![](documentation/img/audit-trend-dashboard.png)
 ## Features
 
 * __Ad-hoc Auditing__ - Quickly run an audit of a website with the `/lighthouse {url}` command, or simply type `/lighthouse` to launch a dialog with all available options
 * __Job Scheduling__ - With the `/lighthouse jobs` command, you can schedule an auditing job to be run whenever necessary
 * __Authentication Scripting__ - When auditing a website that requires an authenticated user, run your audit with an authentication script that will be injected into puppeteer at run-time (more information in [the auth section below](#dealing-with-authentication-screens))
 * __Customizeable HTML Reports__ - Always be able to view the full detailed report from Lighthouse as an HTML file, which is provided by a template in this project, and customize parts of the template (in `src/static/reportTemplate.html`) to your heart's content!
-* __Trend Charts__ - Track changes in each of the audit categories over time for a given URL by running the `/lighthouse stats {url}` command and clicking the link to an intuitive dashboard
+* __Trend Charts__ - Track changes in each of the audit categories over time for a given URL by running the `/lighthouse stats {url}` command and clicking the link to an intuitive dashboard (also provided as an HTML template that can be customized in `src/static/statsTemplate.html`)
 
 ## Development
 ### Pre-requisites
@@ -102,7 +104,7 @@ You can [read the full Hackfest Proposal here](/documentation/README.md)
 
 ### Current Tasks
 - [x] Implementing trend charts for audit results to be accessed with `/lighthouse stats {url}`
-- [ ] Styling audit trends dashboard 
+- [x] Styling audit trends dashboard 
 - [x] Add usernames to schedule schemas so that they can be easily viewed through `/lighthouse schedule list`
 - [x] Implementing `/lighthouse schedule info {id}` to get full details of a given job
 - [ ] Add unit testing with Jest or AVA
