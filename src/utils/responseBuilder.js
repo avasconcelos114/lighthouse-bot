@@ -84,14 +84,15 @@ function generateReportAttachment(report, url) {
     // Add scores per category
     for(const key in categories) {
         const category = categories[key];
-        total_score += category.score;
-        category_count++;
-
-        fields.push({
-            short: true,
-            title: category.title,
-            value: `## \`${Math.floor(category.score * 100)}\``
-        });
+        if (category && category.score) {
+            total_score += category.score;
+            category_count++;
+            fields.push({
+                short: true,
+                title: category.title,
+                value: `## \`${Math.floor(category.score * 100)}\``
+            });
+        }
     }
 
     const avg_score = total_score / category_count;
