@@ -128,12 +128,12 @@ router.get('/lighthouse', async function(req, res) {
             if (req_options[0] && url_pattern.test(req_options[0])) {
                 // Quick audit
                 const opts = {
-                    performance: 'True',
-                    accessibility: 'True',
-                    'best-practices': 'True',
-                    pwa: 'True',
-                    seo: 'True',
-                    throttling: 'False',
+                    performance: true,
+                    accessibility: true,
+                    'best-practices': true,
+                    pwa: true,
+                    seo: true,
+                    throttling: false,
                 };  
                 await runAudit(req_options[0], req_data.user_id, req_data.channel_id, opts);
             } else {

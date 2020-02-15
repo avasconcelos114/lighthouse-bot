@@ -15,12 +15,12 @@ const schema = new mongoose.Schema({
     audit_url: String,
     auth_script: String,
     await_selector: String,
-    performance: String,
-    accessibility: String,
-    'best-practices': String,
-    seo: String,
-    pwa: String,
-    throttling: String,
+    performance: Boolean,
+    accessibility: Boolean,
+    'best-practices': Boolean,
+    seo: Boolean,
+    pwa: Boolean,
+    throttling: Boolean,
 });
 
 const ScheduleModel = mongoose.model('Schedule', schema);
