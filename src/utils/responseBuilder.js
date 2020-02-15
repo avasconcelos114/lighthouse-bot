@@ -134,7 +134,7 @@ function generateCheckbox(display_name, name) {
         display_name: `Enable ${display_name}`,
         name,
         type: 'bool',
-        default: true,
+        default: 'true',
         optional: true,
     };
 }
