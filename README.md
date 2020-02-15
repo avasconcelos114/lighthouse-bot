@@ -11,7 +11,7 @@ This project seeks to provide added value to the Mattermost ecosystem by adding 
 
 * __Ad-hoc Auditing__ - Quickly run an audit of a website with the `/lighthouse {url}` command, or simply type `/lighthouse` to launch a dialog with all available options
 * __Job Scheduling__ - With the `/lighthouse jobs` command, you can schedule an auditing job to be run whenever necessary
-* __Authentication Scripting__ - When auditing a website that requires an authenticated user, run your audit with an authentication script that will be injected into puppeteer at run-time (more information in [the auth section below](#dealing-with-authentication-screens))
+* __Authentication Scripting__ - When auditing a website that requires an authenticated user, run your audit with an authentication script that will be injected into puppeteer at run-time (more information in [the auth tutorial](#tutorials))
 * __Customizeable HTML Reports__ - Always be able to view the full detailed report from Lighthouse as an HTML file, which is provided by a template in this project, and customize parts of the template (in `src/static/reportTemplate.html`) to your heart's content!
 * __Trend Charts__ - Track changes in each of the audit categories over time for a given URL by running the `/lighthouse stats {url}` command and clicking the link to an intuitive dashboard (also provided as an HTML template that can be customized in `src/static/statsTemplate.html`)
 
@@ -102,6 +102,15 @@ While typing `/lighthouse help` provides you with a list of available commands f
 * [Scheduling audit jobs](documentation/recipes/scheduling.md)
 * [Authentication Scripting](documentation/recipes/auth-scripting.md)
 * [Viewing Audit Trends](documentation/recipes/audit-stats.md)
+
+
+## Troubleshooting
+* The audit command fails with an `error while loading shared libraries: libX11-xcb.so.1: cannot open shared object file: No such file or directory` error on Ubuntu
+  * Run the command below to install dependencies needed to launch Puppeteer from your host
+
+  ```
+  sudo apt install -y gconf-service libasound2 libatk1.0-0 libc6 libcairo2 libcups2 libdbus-1-3 libexpat1 libfontconfig1 libgcc1 libgconf-2-4 libgdk-pixbuf2.0-0 libglib2.0-0 libgtk-3-0 libnspr4 libpango-1.0-0 libpangocairo-1.0-0 libstdc++6 libx11-6 libx11-xcb1 libxcb1 libxcomposite1 libxcursor1 libxdamage1 libxext6 libxfixes3 libxi6 libxrandr2 libxrender1 libxss1 libxtst6 ca-certificates fonts-liberation libappindicator1 libnss3 lsb-release xdg-utils wget
+  ```
 
 ## Hackfest Proposal
 This project has been created as a submission to the Mattermost Bot Hackfest.
