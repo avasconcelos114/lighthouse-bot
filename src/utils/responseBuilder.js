@@ -1,4 +1,4 @@
-const {getScoreElement} = require('./common');
+const {getScoreElement, logger} = require('./common');
 
 function generateAuditDialog(is_schedule) {
     let title = 'Run Lighthouse Audit';
@@ -84,6 +84,7 @@ function generateReportAttachment(report, url) {
     // Add scores per category
     for(const key in categories) {
         const category = categories[key];
+        logger.debug(category);
         if (category && category.score) {
             total_score += category.score;
             category_count++;
@@ -133,7 +134,7 @@ function generateCheckbox(display_name, name) {
         display_name: `Enable ${display_name}`,
         name,
         type: 'bool',
-        default: 'True',
+        default: 'true',
         optional: true,
     };
 }
@@ -150,7 +151,7 @@ function generateAuditField(audit) {
 
 function generateBulletCheckbox(key, value) {
     let text = '';
-    if (value === 'True') {
+    if (value) {
         text += '- [x] ';
     } else {
         text += '- [ ] ';
