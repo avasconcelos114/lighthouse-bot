@@ -17,8 +17,13 @@ You may run the `/lighthouse stats {url}` command to receive a link to the audit
 
 ![](/documentation/img/audit-stats-cmd.png)
 
-Note: The dashboard requires at least 2 audits on a URL before becoming available for usage.
+Note: The dashboard requires at least 2 audits on a URL before becoming available for usage.  
+The bot will notify you to run additional audits
+![](/documentation/img/audit-stats-error.png)
 
 After clicking the link you'll be taken to the dashboard where you can view the overall trend by category for the past 5 audit runs
 
 ![](/documentation/img/audit-trend-dashboard.png)
+
+The overall flow of using the `/lighthouse stats {url}` command can be seen below:  
+![](/documentation/img/audit-trend-dashboard.gif)
