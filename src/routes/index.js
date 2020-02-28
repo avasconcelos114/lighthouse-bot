@@ -24,7 +24,7 @@ router.get('/lighthouse', async function(req, res) {
                 + '* `/lighthouse jobs ls` - Show full list of schedules created\n'
                 + '* `/lighthouse jobs info {id}` - Show configuration of a given job\n'
                 + '* `/lighthouse jobs rm {id}` - Removes a scheduled audit job (You may input several IDs in the same command)\n'
-                + '* `/lighthouse stats {url} - Returns a link to the audit trends dashboard of a given URL (**MUST** have performed at least 2 audits on the URL beforehand)'
+                + '* `/lighthouse stats {url}` - Returns a link to the audit trends dashboard of a given URL (**MUST** have performed at least 2 audits on the URL beforehand)'
             });
             return;
         case 'stats':
