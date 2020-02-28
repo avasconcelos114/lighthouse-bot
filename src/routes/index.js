@@ -82,12 +82,12 @@ router.get('/lighthouse', async function(req, res) {
                             deleted_items.push({isDeleted: true, text: `Deleted: ${req_options[id_idx]}`});
                         } catch(error) {
                             utils.common.logger.error(error);
-                            deleted_items.push({isDeleted: false, text: `Error: Failed to remove scheduled job with ID \`${req_options[id_idx]}\`.\nPlease make sure the ID you selected is valid with the \`/lighthouse jobs ls\` command.`});
+                            deleted_items.push({isDeleted: false, text: `Error: Failed to remove scheduled job with ID \`${req_options[id_idx]}\`. Please make sure the ID you selected is valid with the \`/lighthouse jobs ls\` command.`});
                         }
                         id_idx++;
                     }
 
-                    let response = 'Scheduled jobs deletion:';
+                    let response = 'Scheduled jobs deletion:\n';
                     for (item of deleted_items) {
                         response += `* ${item.text}\n`;
                     }
