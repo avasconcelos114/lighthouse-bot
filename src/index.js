@@ -6,11 +6,11 @@ const store = require('./store');
 const routes = require('./routes');
 const PORT = utils.common.checkEnvVar(constants.PORT);
 
-const static_path = path.join(__dirname, "./static");
-
 const app = express();
 require('run-middleware')(app);
 app.use(express.json());
+
+const static_path = path.join(__dirname, "./static");
 app.use(express.static(static_path));
     
 app.use('/', routes);

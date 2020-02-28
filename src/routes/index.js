@@ -64,32 +64,36 @@ router.get('/lighthouse', async function(req, res) {
                     res.send({text});
                     break;
                 case 'rm':
+                    // remove a scheduled job if a valid ID is provided
                     if (!req_options[2]) {
                         res.send({
-                            text: 'Please input the ID of the schedule you\'d like to remove as `/lighthouse remove {id}`'
+                            text: 'Please input the ID of the schedule you\'d like to remove as `/lighthouse remove {id}`\nYou may retrieve this value by running the `/lighthouse jobs ls` command'
                         });
                         return;
                     }
 
                     let id_idx = 2;
-                    let deleted_ids = [];
+                    let deleted_items = [];
                     while(req_options[id_idx]) {
                         try {
                             await store.schedule.deleteScheduleWithId(req_options[id_idx]);
                             utils.schedule.removeJob(req_options[id_idx]);
                             utils.common.logger.info(`removed scheduled job with id=${req_options[id_idx]}`);
-                            deleted_ids.push(req_options[id_idx]);
+                            deleted_items.push({isDeleted: true, text: `Deleted: ${req_options[id_idx]}`});
                         } catch(error) {
                             utils.common.logger.error(error);
-                            res.send({
-                                text: `Failed to remove scheduled job with ID \`${req_options[id_idx]}\`.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`
-                            });
+                            deleted_items.push({isDeleted: false, text: `Error: Failed to remove scheduled job with ID \`${req_options[id_idx]}\`.\nPlease make sure the ID you selected is valid with the \`/lighthouse jobs ls\` command.`});
                         }
                         id_idx++;
                     }
-                    
+
+                    let response = 'Scheduled jobs deletion:';
+                    for (item of deleted_items) {
+                        response += `* ${item.text}\n`;
+                    }
+
                     res.send({
-                        text: 'Successfully deleted scheduled job(s)! \n* ' + deleted_ids.join('\n* ')
+                        text: response
                     });
                     break;
 
@@ -97,7 +101,7 @@ router.get('/lighthouse', async function(req, res) {
                     const id = req_options[2];
                     if (!id) {
                         res.send({
-                            text: 'Please input the ID of the schedule you\'d like to view details of as `/lighthouse info {id}`'
+                            text: 'Please input the ID of the schedule you\'d like to view details of as `/lighthouse info {id}`\nYou may retrieve this value by running the `/lighthouse jobs ls` command'
                         });
                         return;
                     }
@@ -109,7 +113,7 @@ router.get('/lighthouse', async function(req, res) {
                         res.send(response);
                     } catch(error) {
                         utils.common.logger.error(error);
-                        res.send({text: `Failed to fetch information for job with ID \`${id}\`.\nPlease make sure the ID you selected is valid with the \`/lighthouse schedule list\` command.`});
+                        res.send({text: `Failed to fetch information for job with ID \`${id}\`.\nPlease make sure the ID you selected is valid with the \`/lighthouse jobs ls\` command.`});
                     }
                     break;
                 default:
@@ -126,7 +130,7 @@ router.get('/lighthouse', async function(req, res) {
             break;
         default:
             if (req_options[0] && url_pattern.test(req_options[0])) {
-                // Quick audit
+                // Run quick audit if value URL is found in command
                 const opts = {
                     performance: true,
                     accessibility: true,
@@ -137,7 +141,7 @@ router.get('/lighthouse', async function(req, res) {
                 };  
                 await runAudit(req_options[0], req_data.user_id, req_data.channel_id, opts);
             } else {
-                // Audit dialog w/ options
+                // Launch audit dialog w/ options
                 utils.common.logger.info(`launching audit dialog for user_id=${req_data.user_id}`);
                 const dialog = utils.response.generateAuditDialog();
                 const payload = {
