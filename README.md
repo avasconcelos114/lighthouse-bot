@@ -20,7 +20,7 @@ This project seeks to provide added value to the Mattermost ecosystem by adding 
 
 * **Node.js v10+**
 
-* **Mattermost v5.16+**
+* **Mattermost v5.20+**
 
 * **[Create a Bot Account](https://docs.mattermost.com/developer/bot-accounts.html#user-interface-ui), or [issue a Personal Access Token](https://docs.mattermost.com/developer/personal-access-tokens.html#creating-a-personal-access-token) in a Mattermost server of your choice**
 
@@ -60,6 +60,7 @@ docker run -d -p 3001:3001 -v $PWD/src:/home/app/src -e TZ="Asia/Seoul" -e PORT=
 ```
 
 **3. [Register a slash command](https://docs.mattermost.com/developer/slash-commands.html#custom-slash-command) in Mattermost that sends a `GET` request to the `/lighthouse` endpoint**  
+![](documentation/img/lighthouse-slashcmd.png)
 
 ### Developing with PM2
 **0. Follow the [installation guide for MongoDB](https://docs.mongodb.com/manual/installation/) to set up your MongoDB instance** 
@@ -91,6 +92,9 @@ npm install
 ```
 pm2 start ecosystem.config.js
 ```
+
+**5. [Register a slash command](https://docs.mattermost.com/developer/slash-commands.html#custom-slash-command) in Mattermost that sends a `GET` request to the `/lighthouse` endpoint**  
+![](documentation/img/lighthouse-slashcmd.png)
 
 ## Deployment
 Deploying this chatbot is done in the same way as the [development environment setup](#development), with the exception that you would set the `NODE_ENV` variable to `production`, as well as not do any volume binding to the host when running the chatbot with Docker.
