@@ -1,7 +1,7 @@
 # Authentication Scripting
 
 ## Pre-requisites
-* A Mattermost server v5.16+
+* A Mattermost server v5.20+
 * Completing the [initial setup for the Lighthouse chatbot](/README.md#deployment)
 
 ## Explanation

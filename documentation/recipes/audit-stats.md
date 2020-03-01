@@ -1,7 +1,7 @@
 # Viewing Audit Trends
 
 ## Pre-requisites
-* A Mattermost server v5.16+
+* A Mattermost server v5.20+
 * Completing the [initial setup for the Lighthouse chatbot](/README.md#deployment)
 * Running audits on a given URL at least twice (Either through [ad-hoc auditing](/documentation/recipes/ad-hoc.md) or [scheduled jobs](/documentation/recipes/scheduling.md))
 
