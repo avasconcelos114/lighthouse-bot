@@ -1,4 +1,4 @@
-# Lighthouse Auditing Bot
+# Lighthouse Auditing Bot   |  ![](https://img.shields.io/docker/pulls/avasconcelos114/lighthouse-bot.svg?maxAge=604800)  
 ![](documentation/img/lighthouse-logo.png)
 
 ## Summary
@@ -41,9 +41,9 @@ Regardless of the method you are deploying with, this application relies on a va
 | TZ (optional) | Asia/Seoul | The timezone value that will be used on server (important for job scheduling) |
 
 ### Developing with Docker
-**0. Build Lighthouse bot image**   
+**0. Build local Lighthouse bot image** (optional)
 ```
-docker build -t lighthouse-bot .
+docker build -t avasconcelos114/lighthouse-bot .
 ```
 
 **1. Run mongodb (as a separate container)**  
@@ -56,7 +56,7 @@ Note: Ensure you have the environment variables set when running the container
   
 Example `run` command:
 ```
-docker run -d -p 3001:3001 -v $PWD/src:/home/app/src -e TZ="Asia/Seoul" -e PORT=3001 -e MATTERMOST_SERVER="http://192.168.1.129:8065" -e TOKEN="sd67j1cxepnc7meo3prf3krzgr" -e MONGO_USERNAME="root" -e MONGO_PASSWORD="test_passwd" -e MONGO_SERVER="192.168.1.129:27017" -e CHATBOT_SERVER="http://192.168.1.129:3001" --name lighthouse-bot lighthouse-bot
+docker run -d -p 3001:3001 -v $PWD/src:/home/app/src -e TZ="Asia/Seoul" -e PORT=3001 -e MATTERMOST_SERVER="http://192.168.1.129:8065" -e TOKEN="sd67j1cxepnc7meo3prf3krzgr" -e MONGO_USERNAME="root" -e MONGO_PASSWORD="test_passwd" -e MONGO_SERVER="192.168.1.129:27017" -e CHATBOT_SERVER="http://192.168.1.129:3001" --name lighthouse-bot avasconcelos114/lighthouse-bot
 ```
 
 **3. [Register a slash command](https://docs.mattermost.com/developer/slash-commands.html#custom-slash-command) in Mattermost that sends a `GET` request to the `/lighthouse` endpoint**  
