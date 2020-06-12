@@ -56,14 +56,13 @@ async function launchPuppeteer(url, options) {
         if (options.seo) opts.onlyCategories.push('seo');
         
         // as throttling is enabled by default in lighthouse, disable it if explicitly unchecked
-    if (!options.throttling) opts.throttlingMethod = 'provided';
+        if (!options.throttling) opts.throttlingMethod = 'provided';
 
         const {lhr} = await lighthouse(url, opts);
-
-        await browser.close();
-
         // Return response back to main thread
         parentPort.postMessage(lhr);
+
+        await browser.close();
         return;
     } catch(error) {
         logger.error(error);
@@ -92,10 +91,10 @@ function generateHtmlReport(lhr) {
     const sanitizedJavascript = htmlReportAssets.REPORT_JAVASCRIPT.replace(/<\//g, '\\u003c/');
 
     return replaceStrings(REPORT_TEMPLATE, [
-      {search: '%%LIGHTHOUSE_JSON%%', replacement: sanitizedJson},
-      {search: '%%LIGHTHOUSE_JAVASCRIPT%%', replacement: sanitizedJavascript},
-      {search: '/*%%LIGHTHOUSE_CSS%%*/', replacement: htmlReportAssets.REPORT_CSS},
-      {search: '%%LIGHTHOUSE_TEMPLATES%%', replacement: htmlReportAssets.REPORT_TEMPLATES},
+        {search: '%%LIGHTHOUSE_JSON%%', replacement: sanitizedJson},
+        {search: '%%LIGHTHOUSE_JAVASCRIPT%%', replacement: sanitizedJavascript},
+        {search: '/*%%LIGHTHOUSE_CSS%%*/', replacement: htmlReportAssets.REPORT_CSS},
+        {search: '%%LIGHTHOUSE_TEMPLATES%%', replacement: htmlReportAssets.REPORT_TEMPLATES},
     ]);
 }
 

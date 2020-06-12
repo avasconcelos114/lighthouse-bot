@@ -130,5 +130,5 @@ You can [read the full Hackfest Proposal here](/documentation/README.md)
 - [x] Write documentation to make command usage clearer
 - [x] Add more comprehensive logging
 - [x] Investigate the possibility of using workers to run audits so that multiple audits can run simultaneously
-- [ ] Add a configurable number of past audits to be fetched from `stats` command
+- [x] Add a configurable number of past audits to be fetched from `stats` command
   - e.g. `/lighthouse stats https://google.com limit 15` 

@@ -88,7 +88,7 @@ router.get('/lighthouse', async function(req, res) {
                     }
 
                     let response = 'Scheduled jobs deletion:\n';
-                    for (item of deleted_items) {
+                    for (const item of deleted_items) {
                         response += `* ${item.text}\n`;
                     }
 
@@ -235,6 +235,7 @@ async function runAudit(url, user_id, channel_id, options) {
         const lhs = await utils.lighthouse.runLighthouseAudit(url, options);
         const report = utils.response.generateReportAttachment(lhs, url);
         const audit = await store.audit.createAudit(user_id, JSON.stringify(lhs), url);
+        console.log(audit._id);
         const payload = {
             channel_id: channel_id,
             message: `#lighthouse_audit\nPerformance auditing completed at \`${time}\`\n\nView full report [here](${CHATBOT_SERVER}/view_report/${audit._id})`,
@@ -287,7 +288,7 @@ router.get('/view_report/:id', async function(req, res) {
 });
 
 router.get('/view_stats', async function(req, res) {
-    const {url} = req.query;
+    const {url, number} = req.query;
     res.setHeader('Content-Type', 'text/html');
     try {
         if (!url) {
@@ -302,7 +303,7 @@ router.get('/view_stats', async function(req, res) {
             pwa: [],
             seo: [],
         };
-        const audits = await store.audit.getAuditReportsByUrl(url);
+        const audits = await store.audit.getAuditReportsByUrl(url, parseInt(number));
         for (let audit of audits) {
             const report = JSON.parse(audit.report);
             const date = new Date(audit.created_date * 1000).toLocaleTimeString([], {year: 'numeric', month: '2-digit', day: '2-digit'});

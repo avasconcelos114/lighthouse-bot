@@ -28,9 +28,9 @@ async function getAuditReport(id) {
     return report;
 }
 
-async function getAuditReportsByUrl(url) {
-    const audits = await AuditModel.find({audit_url: url}).limit(5);
-    return audits;
+async function getAuditReportsByUrl(url, reportNumber) {
+    const audits = await AuditModel.find({audit_url: url}).sort({_id: -1}).limit(reportNumber || 5);
+    return audits.reverse();
 }
 
 module.exports = {

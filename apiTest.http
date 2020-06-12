@@ -1,0 +1,29 @@
+###
+GET http://localhost:3001/lighthouse
+
+###
+GET http://localhost:3001/viewstats
+
+###
+GET http://localhost:3001/view_report/{id}
+
+###
+POST http://127.0.0.1:3001/init_audit HTTP/1.1
+Content-Type: application/json
+
+{
+    "audit_url": "https://www.google.com",
+    "user_id": "1",
+    "channel_id": "123",
+    "options": {
+        "performance": true,
+        "accessibility": true,
+        "best-practices": true,
+        "pwa": false,
+        "seo": false,
+        "throttling": true
+    }
+}
+
+##
+POST http://localhost:3001/create_schedule
